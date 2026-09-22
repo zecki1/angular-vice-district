@@ -114,6 +114,11 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+      - name: Subir servidor local para auditoria
+        run: |
+          npx serve dist/vice-district/browser -l 4173 &
+          sleep 3
+          curl -s -o /dev/null -w "servidor HTTP %{http_code}\n" http://localhost:4173
       - name: Rodar Lighthouse CI
         uses: treosh/lighthouse-ci-action@v2
         with:
