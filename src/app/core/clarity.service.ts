@@ -2,9 +2,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { environment } from '../../environments/environment';
 
-interface ClarityFn {
-  (...args: unknown[]): void;
-}
+type ClarityFn = (...args: unknown[]) => void;
 
 declare global {
   interface Window {
