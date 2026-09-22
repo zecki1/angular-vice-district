@@ -1,50 +1,75 @@
-# Vice District
+# Vice District — angular-vice-district
 
-> Semana(s): 1 · Pilar: **Showcase** · Unit: **Karma** · Milestone(s): `m1-vice-district`
+> Semana(s): 1 · Pilar: **Showcase** · Teste unitário: **Karma** · Milestone(s): `m1-vice-district`
+> Repo público: [github.com/zecki1/angular-vice-district](https://github.com/zecki1/angular-vice-district)
 
-**Objetivo de entrevista:** dominar narrativa visual cinemática: scroll-driven, preloader, parallax e micro-interações em Angular zoneless
+## Objetivo de entrevista
 
-**Repo:** `github.com/zecki1/angular-vice-district`
+dominar narrativa visual cinemática: scroll-driven, preloader, parallax e micro-interações em Angular zoneless
 
 ## Stack
 
-Angular (standalone, signals, zoneless, OnPush) · Supabase · Tailwind · Vercel
+- **Angular 22** — standalone, signals, zoneless, OnPush por padrão
+- **Supabase** — Postgres + Auth + RLS (projeto compartilhado `angular-portfolio`)
+- **Tailwind CSS** · **ECharts** (dashboards) · **GSAP** (motion) · **three.js** (3D)
+- **Vercel** — build estático (sem cold start, sempre online)
+
+## Fluxo de trabalho (Git)
+
+Ambientes preservados em **português brasileiro** (commits, PRs, issues, CI).
+
+```
+main      → produção (build estático; nunca push direto)
+homolog   → validação/release de PRs (staging)
+develop   → integração diária (merges das branches feat/*)
+feature   → feat/<assunto> + PR para develop (boas práticas de código limpo)
+```
+
+- **Commits:** `feat:`, `fix:`, `test:`, `docs:`, `design:`, `ops:`, `backend:` (conventional commits)
+- **PRs:** sempre via **pull request template**; revisados e mergeados por milestone
+- **main:** protegida — merge somente via PR de `homolog`
+- Rastreabilidade com issues, labels (`feat/test/design/ops/backend`), milestones e releases
 
 ## Rodando localmente
 
 ```bash
 npm install
-npm start          # ng serve
-npm test           # unit (Karma)
-npm run e2e        # Playwright
-npm run build      # ng build
-npm run analyze    # source-map-explorer
+npm start            # ng serve
+npm test             # unitário (Karma)
+npm run test:ci      # unitário em modo CI (coverage)
+npm run e2e          # Playwright (local)
+npm run e2e:ci       # Playwright (CI)
+npm run build        # ng build
+npm run analyze      # source-map-explorer (análise de bundle)
 ```
 
-## Decisão de teste: Karma
+## Ambiente (Supabase)
 
-> Justificativa detalhada (preencher no desenvolvimento): por que Karma para este projeto.
+Variáveis em `.env` (nunca commitadas):
 
-## Supabase
-
-Dados usados: leads (gta-campaign)
-Variáveis (`.env`):
 ```
 VITE_SUPABASE_URL=
 VITE_SUPABASE_ANON_KEY=
 VITE_ROLE=demo
 ```
 
+Dados usados: leads (gta-campaign)
+
+## Decisão de teste: Karma
+
+> Por que **Karma** neste projeto? (justificativa detalhada a ser preenchida durante o desenvolvimento — ração §2 do planejamento)
+> Cada repo alterna Karma/Vitest de propósito: agnóstico de ferramenta, escolha por contexto.
+
 ## Checklist DoD
 
 - [ ] Build/lint/typecheck limpos
 - [ ] Unit (Karma) com cobertura ≥ 80%
 - [ ] E2E Playwright + axe sem violações críticas
-- [ ] Lighthouse ≥ 90
+- [ ] Lighthouse ≥ 90 (Performance/SEO/A11y)
 - [ ] Responsivo (mobile/tablet/desktop)
-- [ ] README: screenshot + o que aprendi + decisão de teste
+- [ ] README com screenshot + "o que aprendi" + decisão de teste
 - [ ] Supabase configurado (quando aplicável)
-- [ ] PR merged + release por milestone
+- [ ] PR revisado + merged + release por milestone
 
 ## O que aprendi
 
