@@ -1,0 +1,5 @@
+.angular/
+coverage/
+bundle-analysis/
+playwright-report/
+node_modules/
