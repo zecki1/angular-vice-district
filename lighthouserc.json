@@ -1,7 +1,7 @@
 {
   "ci": {
     "collect": {
-      "url": ["http://localhost:4200/"],
+      "url": ["http://localhost:4173/"],
       "numberOfRuns": 2,
       "settings": {
         "chromeFlags": "--no-sandbox --headless=new --disable-gpu"
