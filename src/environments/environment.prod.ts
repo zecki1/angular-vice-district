@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  clarityId: 'CLARITY_ID_AQUI',
+  clarityId: 'ymef9p6m6l',
 };
