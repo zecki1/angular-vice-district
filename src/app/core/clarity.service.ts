@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { environment } from '../../environments/environment';
 
 type ClarityFn = (...args: unknown[]) => void;
@@ -18,6 +18,8 @@ export class ClarityService {
 
   /** Inicia o Microsoft Clarity usando o snippet oficial (IIFE do loader). */
   iniciar(): void {
+    // `iniciar()` é chamado no construtor do App, que também roda em SSR/prerender.
+    // Sem este guard o `document` não existiria e o loader vazaria para o HTML servido.
     if (!isPlatformBrowser(this.platformId)) return;
 
     const clarityId = environment.clarityId?.trim();
