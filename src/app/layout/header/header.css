@@ -1,0 +1,64 @@
+.cabecalho {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1rem 2.2rem;
+  background: linear-gradient(to bottom, rgb(0 0 0 / 0.55), transparent);
+  transition: background 0.35s ease, padding 0.35s ease;
+}
+.cabecalho.rolado {
+  background: var(--fundo);
+  border-bottom: 1px solid var(--borda);
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+}
+
+.cabecalho-marca {
+  font-size: 1.7rem;
+  text-decoration: none;
+  color: var(--neon-pink);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 18px var(--meia-agua);
+}
+
+.cabecalho-nav {
+  display: flex;
+  gap: 1.6rem;
+  align-items: center;
+}
+.cabecalho-nav a {
+  color: var(--texto-suave);
+  text-decoration: none;
+  font-size: 0.92rem;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+.cabecalho-nav a:hover {
+  color: var(--texto);
+}
+
+.cabecalho-tema {
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 9999px;
+  border: 1px solid var(--borda);
+  background: var(--superficie);
+  color: var(--texto);
+  font-size: 1.1rem;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+}
+
+@media (max-width: 640px) {
+  .cabecalho-nav {
+    display: none;
+  }
+}

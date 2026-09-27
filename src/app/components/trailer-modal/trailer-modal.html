@@ -1,0 +1,36 @@
+<section id="trailer" class="trailer">
+  <h2 class="trailer-titulo display">A prévia mais aguardada<br />da década</h2>
+  <button type="button" class="trailer-play" (click)="abrir()" aria-label="Reproduzir trailer">
+    <span class="trailer-play-icone" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
+    <span class="trailer-play-texto">Reproduzir trailer</span>
+  </button>
+</section>
+
+@if (aberto()) {
+  <div
+    class="modal"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Trailer de Vice District"
+    tabindex="-1"
+    (click)="fecharSeFundo($event)"
+    (keydown.escape)="fechar()"
+  >
+    <div class="modal-conteudo">
+      <button
+        type="button"
+        class="modal-fechar"
+        #botaoFechar
+        aria-label="Fechar trailer"
+        (click)="fechar()"
+      >
+        &times;
+      </button>
+      <div class="modal-video" aria-hidden="true">
+        <span class="modal-neon"></span>
+      </div>
+      <p class="modal-titulo display">VICE DISTRICT</p>
+      <p class="modal-legenda">Estreia em breve — cartazes e eleitores a caminho.</p>
+    </div>
+  </div>
+}

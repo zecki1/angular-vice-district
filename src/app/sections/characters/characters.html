@@ -1,0 +1,11 @@
+<section id="personagens" class="characters">
+  <div class="characters-cabecalho">
+    <p class="characters-eyebrow">Elenco</p>
+    <h2 class="characters-titulo display">Cinco vidas.<br />Uma cidade.</h2>
+  </div>
+  <div class="characters-grid">
+    @for (personagem of comCapa(); track personagem.nome) {
+      <app-character-card [character]="personagem" />
+    }
+  </div>
+</section>
