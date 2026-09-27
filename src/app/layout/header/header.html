@@ -1,0 +1,24 @@
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+<header #cabecalho class="cabecalho">
+  <a class="cabecalho-marca display" href="#topo" rel="home">VD</a>
+
+  <nav class="cabecalho-nav" aria-label="Navegação principal">
+    <a href="#prologo">Prólogo</a>
+    <a href="#personagens">Elenco</a>
+    <a href="#galeria">Cenas</a>
+    <a href="#trailer">Trailer</a>
+    <a href="#newsletter">Lista</a>
+  </nav>
+
+  <button
+    type="button"
+    class="cabecalho-tema"
+    [attr.aria-label]="tema() === 'dark' ? 'Ativar tema claro' : 'Ativar tema escuro'"
+    (click)="alternarTema()"
+  >
+    <span aria-hidden="true">{{ tema() === 'dark' ? '&#9788;' : '&#9681;' }}</span>
+  </button>
+</header>
+
+<app-accessibility-hub />

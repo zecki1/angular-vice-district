@@ -1,0 +1,109 @@
+.card {
+  --cor-personagem: var(--neon-pink);
+  position: relative;
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+  will-change: transform;
+}
+.card:hover {
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.35);
+}
+
+.card-silhueta {
+  aspect-ratio: 3 / 4;
+  background:
+    radial-gradient(circle at 50% 22%, var(--cor-personagem) 0%, transparent 55%),
+    linear-gradient(to bottom, var(--superficie-alt), var(--fundo));
+  position: relative;
+}
+.card-silhueta::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 42%;
+  height: 62%;
+  background: linear-gradient(160deg, var(--superficie-alt), var(--fundo));
+  clip-path: polygon(0 0, 100% 0, 82% 100%, 18% 100%);
+}
+
+.card-capa {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--superficie-alt);
+}
+.card-capa-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.card:hover .card-capa-img {
+  transform: scale(1.06);
+}
+
+.card-ciano {
+  position: absolute;
+  right: 8%;
+  top: 10%;
+  width: 3.4rem;
+  height: 0.7rem;
+  background: var(--neon-turquesa);
+  border-radius: 4px;
+  filter: drop-shadow(0 0 8px var(--neon-turquesa));
+}
+
+.card-grau-badge {
+  position: absolute;
+  left: 0;
+  bottom: 0.8rem;
+  z-index: 2;
+  padding: 0.4rem 0.9rem;
+  border-radius: 0 9999px 9999px 0;
+  background: var(--neon-pink);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.card-capa .card-grau-badge {
+  bottom: auto;
+  top: 0.8rem;
+  left: 0.8rem;
+  border-radius: 9999px;
+  background: rgb(0 0 0 / 0.6);
+  backdrop-filter: blur(6px);
+}
+
+.card-corpo {
+  padding: 1.1rem 1.25rem 1.35rem;
+  flex: 1;
+}
+
+.card-nome {
+  margin: 0 0 0.2rem;
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 1.45rem;
+}
+
+.card-papel {
+  margin: 0 0 0.7rem;
+  font-size: 0.85rem;
+  color: var(--cor-personagem);
+  font-weight: 600;
+}
+
+.card-descricao {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--texto-suave);
+}
