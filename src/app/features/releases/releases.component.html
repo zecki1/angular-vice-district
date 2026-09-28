@@ -1,0 +1,74 @@
+<div class="releases-page">
+  <header class="page-header section">
+    <div class="container">
+      <div class="page-header-content">
+        <div>
+          <h1 class="page-title">Lançamentos</h1>
+          <p class="page-subtitle">Calendário de lançamentos - Próximos e recentes</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div class="tab-nav" role="tablist" aria-label="Filtrar lançamentos">
+        <button
+          role="tab"
+          [attr.aria-selected]="currentTab() === 'upcoming'"
+          [class.active]="currentTab() === 'upcoming'"
+          (click)="currentTab.set('upcoming')"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          Próximos
+        </button>
+        <button
+          role="tab"
+          [attr.aria-selected]="currentTab() === 'recent'"
+          [class.active]="currentTab() === 'recent'"
+          (click)="currentTab.set('recent')"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+          Recentes
+        </button>
+      </div>
+
+      @if (currentTab() === 'upcoming') {
+        <div class="upcoming-timeline" role="tabpanel">
+          @for (game of groupedUpcoming(); track $index) {
+            <div class="month-group">
+              <h2 class="month-label">{{ game.month }}</h2>
+              <div class="grid-auto-fit" role="list">
+                @for (g of game.games; track g.id) {
+                  <app-game-card [game]="g" variant="default" role="listitem" />
+                }
+              </div>
+            </div>
+          } @empty {
+            <div class="empty-state">
+              <h3>Nenhum lançamento encontrado</h3>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="grid-auto-fit" role="list">
+          @for (game of recentReleases(); track game.id) {
+            <app-game-card [game]="game" variant="default" role="listitem" />
+          } @empty {
+            <div class="empty-state">
+              <h3>Nenhum lançamento recente</h3>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </section>
+</div>
