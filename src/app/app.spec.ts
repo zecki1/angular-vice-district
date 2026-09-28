@@ -1,27 +1,29 @@
-import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { TestBed } from '@angular/core/testing';
+
 import { App } from './app';
+import { routes } from './app.routes';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
-      providers: [provideRouter([])],
+      providers: [provideRouter(routes)],
     }).compileComponents();
   });
 
-  it('deve criar o componente raiz', () => {
+  it('cria o componente raiz', () => {
     const fixture = TestBed.createComponent(App);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('deve renderizar o shell com header, conteúdo e rodapé', async () => {
+  it('monta o shell e o router-outlet', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.skip-link')).toBeTruthy();
-    expect(compiled.querySelector('main#conteudo')).toBeTruthy();
-    expect(compiled.querySelector('.rodape')).toBeTruthy();
+    const html = (fixture.nativeElement as HTMLElement).innerHTML;
+
+    expect(html).toContain('app-shell');
+    expect(html).toContain('router-outlet');
+    expect(html).not.toContain('<h1');
   });
 });
