@@ -1,0 +1,40 @@
+.characters {
+  padding: 6rem 1.5rem;
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.characters-cabecalho {
+  margin-bottom: 3rem;
+}
+
+.characters-eyebrow {
+  margin: 0 0 0.75rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--neon-turquesa);
+}
+
+.characters-titulo {
+  margin: 0;
+  font-size: clamp(2.2rem, 6vw, 4.5rem);
+}
+
+.characters-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .characters-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .characters-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

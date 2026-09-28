@@ -1,3 +1,199 @@
-/* You can add global styles to this file, and also import other style files */
-
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;600;700&display=swap');
 @import 'tailwindcss';
+
+/* ---------- Tokens — tema escuro (padrão, estética "Vice District" estilo streaming) ---------- */
+:root,
+:root[data-theme='dark'] {
+  --fundo: #0a0a0a;
+  --superficie: #141414;
+  --superficie-alt: #1f1f25;
+  --borda: rgba(255, 255, 255, 0.12);
+  --texto: #f5f5f5;
+  --texto-suave: #a3a3ad;
+  --texto-fraco: #6f6f78;
+  --neon-pink: #e50914;
+  --neon-turquesa: #00c4a0;
+  --linha-guia: rgba(255, 255, 255, 0.08);
+  --sombra-painel: 0 30px 60px rgba(0, 0, 0, 0.6);
+  --meia-agua: rgba(229, 9, 20, 0.4);
+  --cor-erro: #ff5c7a;
+  color-scheme: dark;
+}
+
+/* ---------- Tokens — tema claro ---------- */
+:root[data-theme='light'] {
+  --fundo: #f5f3ef;
+  --superficie: #ffffff;
+  --superficie-alt: #eceef1;
+  --borda: rgba(17, 17, 17, 0.14);
+  --texto: #111214;
+  --texto-suave: #5b6470;
+  --texto-fraco: #8a919c;
+  --neon-pink: #d1000c;
+  --neon-turquesa: #00856a;
+  --linha-guia: rgba(17, 17, 17, 0.1);
+  --sombra-painel: 0 30px 60px rgba(17, 17, 17, 0.18);
+  --meia-agua: rgba(209, 0, 12, 0.22);
+  --cor-erro: #b3261e;
+  color-scheme: light;
+}
+
+/* ---------- Base ---------- */
+html {
+  font-size: 16px;
+  scroll-behavior: auto;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--fundo);
+  color: var(--texto);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition:
+    background-color 0.35s ease,
+    color 0.35s ease;
+  overflow-x: hidden;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--meia-agua);
+  color: var(--texto);
+}
+
+/* ---------- Tipografia display ---------- */
+.display {
+  font-family: 'Archivo Black', 'Inter', sans-serif;
+  letter-spacing: -0.02em;
+  line-height: 0.95;
+}
+
+/* ---------- Filtros de acessibilidade (igual aos outros sites) ---------- */
+html.modo-monocromatico {
+  filter: grayscale(100%) !important;
+}
+html.modo-protanopia {
+  filter: hue-rotate(20deg) saturate(50%) !important;
+}
+html.modo-deuteranopia {
+  filter: hue-rotate(90deg) saturate(50%) !important;
+}
+html.modo-tritanopia {
+  filter: hue-rotate(180deg) saturate(50%) !important;
+}
+html.modo-baixo-contraste {
+  filter: saturate(60%) contrast(0.9) !important;
+}
+
+/* ---------- Fonte OpenDyslexic (Hub de Acessibilidade) ---------- */
+@font-face {
+  font-family: 'OpenDyslexic';
+  src:
+    url('/fonts/OpenDyslexic-Regular.woff2') format('woff2'),
+    url('/fonts/OpenDyslexic-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+html.font-dyslexic body,
+html.font-dyslexic * {
+  font-family: 'OpenDyslexic', 'Inter', sans-serif !important;
+}
+
+/* ---------- Alto contraste (modo forte) ---------- */
+html.alto-contraste {
+  --fundo: #000;
+  --superficie: #000;
+  --texto: #fff;
+  --texto-suave: #fff;
+  --texto-fraco: #eee;
+  --borda: rgba(255, 255, 255, 0.9);
+  --neon-pink: #ffdd00;
+  --neon-turquesa: #00ffff;
+}
+
+/* ---------- Linhas-guia (grid de referência Awwwards) ---------- */
+html.linhas-guia body {
+  background-image:
+    linear-gradient(var(--linha-guia) 1px, transparent 1px),
+    linear-gradient(90deg, var(--linha-guia) 1px, transparent 1px);
+  background-size: calc(100% / 12) 1px, calc(100% / 12) 1px;
+}
+
+/* ---------- Redução de movimento ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html.reduz-movimento *,
+  html.reduz-movimento *::before,
+  html.reduz-movimento *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------- Suporte a seguir conteúdo do botão Voltar ao topo ---------- */
+:focus-visible {
+  outline: 3px solid var(--neon-turquesa);
+  outline-offset: 2px;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+/* ---------- Utilitários de conteúdo (skip link / sr-only) ---------- */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  background: var(--neon-pink);
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  border-radius: 0 0 8px 0;
+  font-weight: 700;
+}
+.skip-link:focus {
+  left: 0;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

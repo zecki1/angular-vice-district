@@ -1,0 +1,76 @@
+.newsletter {
+  padding: 6rem 1.5rem;
+  max-width: 52rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.newsletter-eyebrow {
+  margin: 0 0 0.75rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--neon-turquesa);
+}
+
+.newsletter-titulo {
+  margin: 0 0 1rem;
+  font-size: clamp(2rem, 5.5vw, 4rem);
+}
+
+.newsletter-descricao {
+  margin: 0 auto 2rem;
+  max-width: 32rem;
+  color: var(--texto-suave);
+}
+
+.newsletter-form {
+  display: flex;
+  gap: 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.newsletter-input {
+  flex: 1 1 16rem;
+  padding: 0.9rem 1.15rem;
+  border-radius: 8px 0 0 8px;
+  border: 1px solid var(--borda);
+  border-right: none;
+  background: var(--superficie);
+  color: var(--texto);
+  font: inherit;
+}
+.newsletter-input:focus-visible {
+  outline: 2px solid var(--neon-pink);
+  outline-offset: 2px;
+}
+
+.newsletter-botao {
+  padding: 0.9rem 2rem;
+  border-radius: 0 8px 8px 0;
+  border: none;
+  background: var(--neon-pink);
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+.newsletter-botao:hover {
+  transform: translateY(-1px);
+  background: #f10915;
+}
+
+.newsletter-sucesso {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--neon-turquesa);
+}
+
+.newsletter-erro {
+  margin: 1rem 0 0;
+  font-size: 0.9rem;
+  color: var(--cor-erro);
+}
