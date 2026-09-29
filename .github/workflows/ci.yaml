@@ -65,7 +65,7 @@ jobs:
         env:
           E2E_BASE_URL: http://localhost:4173
         run: |
-          npx serve dist/vice-district/browser -l 4173 &
+          npx serve -s dist/vice-district/browser --listen 4173 &
           sleep 2
           npm run e2e:ci
           status=$?
