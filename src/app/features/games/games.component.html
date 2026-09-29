@@ -28,21 +28,21 @@
         </div>
 
         <div class="filter-group">
-          <select class="input select" [value]="selectedGenre()" (change)="selectedGenre.set($any($event.target).value); onFilterChange()">
+          <select class="input select" aria-label="Filtrar por gênero" [value]="selectedGenre()" (change)="selectedGenre.set($any($event.target).value); onFilterChange()">
             <option value="">Todos os gêneros</option>
             @for (genre of genres(); track genre.slug) {
               <option [value]="genre.slug">{{ genre.name }}</option>
             }
           </select>
 
-          <select class="input select" [value]="selectedPlatform()" (change)="selectedPlatform.set($any($event.target).value); onFilterChange()">
+          <select class="input select" aria-label="Filtrar por plataforma" [value]="selectedPlatform()" (change)="selectedPlatform.set($any($event.target).value); onFilterChange()">
             <option value="">Todas as plataformas</option>
             @for (platform of platforms(); track platform.slug) {
               <option [value]="platform.slug">{{ platform.name }}</option>
             }
           </select>
 
-          <select class="input select" [value]="sortBy()" (change)="onSortChange($any($event.target).value)">
+          <select class="input select" aria-label="Ordenar por" [value]="sortBy()" (change)="onSortChange($any($event.target).value)">
             <option value="-rating">Melhor avaliados</option>
             <option value="-released">Mais recentes</option>
             <option value="-added">Mais adicionados</option>

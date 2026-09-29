@@ -114,7 +114,7 @@
           </article>
         } @empty {
           @for (i of [1,2,3,4]; track i) {
-            <article class="news-card card skeleton">
+            <article class="news-card card skeleton" role="listitem">
               <div class="news-image skeleton" style="aspect-ratio: 16/9;"></div>
               <div class="news-content">
                 <div class="skeleton" style="width: 80px; height: 16px;"></div>
@@ -157,7 +157,7 @@
           </article>
         } @empty {
           @for (i of [1,2,3]; track i) {
-            <article class="free-game-card card skeleton">
+            <article role="listitem" class="free-game-card card skeleton">
               <div class="free-game-image skeleton" style="aspect-ratio: 16/9;"></div>
               <div class="free-game-content">
                 <div class="skeleton" style="width: 60%; height: 24px;"></div>
