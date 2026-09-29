@@ -13,7 +13,7 @@
     "lint": "ng lint",
     "e2e": "playwright test",
     "e2e:ci": "playwright test --reporter=html,list",
-    "analyze": "source-map-explorer 'dist/vice-district/browser/**/*.js'"
+    "analyze": "ng build --stats-json"
   },
   "private": true,
   "packageManager": "npm@11.7.0",
