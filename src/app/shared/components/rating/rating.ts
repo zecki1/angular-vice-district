@@ -3,7 +3,7 @@ import { Component, input, computed } from '@angular/core';
 @Component({
   selector: 'app-rating',
   template: `
-    <div class="rating" [attr.aria-label]="'Avaliação: ' + value() + ' de ' + max()">
+    <div class="rating" role="img" [attr.aria-label]="'Avaliação: ' + value() + ' de ' + max()">
       @for (star of stars(); track $index) {
         <span class="star" [class.filled]="$index < filledStars()" [class.half]="$index === filledStars() && hasHalf()">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
