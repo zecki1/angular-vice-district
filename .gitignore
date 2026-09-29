@@ -27,3 +27,7 @@ Thumbs.db
 
 .vercel
 .env*
+
+# Arquivo gerado por scripts/gerar-ambiente.mjs (contem chaves do .env)
+src/environments/ambiente.local.ts
+**/src/environments/ambiente.local.ts
