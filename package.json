@@ -12,6 +12,7 @@
     "prelint": "node scripts/gerar-ambiente.mjs",
     "lint": "ng lint",
     "e2e": "playwright test",
+    "e2e:ci": "playwright test --reporter=html,list",
     "analyze": "source-map-explorer 'dist/vice-district/browser/**/*.js'"
   },
   "private": true,
