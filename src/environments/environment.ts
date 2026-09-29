@@ -6,4 +6,8 @@ export const environment = {
   trailerVideoId: ambienteLocal.trailerVideoId,
   supabaseUrl: ambienteLocal.supabaseUrl,
   supabaseAnonKey: ambienteLocal.supabaseAnonKey,
+  supabaseProjectSlug: ambienteLocal.supabaseProjectSlug,
+  tmdbApiKey: ambienteLocal.tmdbApiKey,
+  tmdbBaseUrl: ambienteLocal.tmdbBaseUrl,
+  tmdbImagem: ambienteLocal.tmdbImagem,
 };

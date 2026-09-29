@@ -6,18 +6,18 @@ gsap.registerPlugin(ScrollTrigger);
 
 /** Aplica um deslocamento vertical suave conforme o elemento atravessa a viewport. */
 @Directive({
-  selector: '[appParallax]',
+  selector: '[apParallax]',
 })
 export class ParallaxDirective implements AfterViewInit {
   private readonly el = inject(ElementRef<HTMLElement>);
 
-  @Input() appParallax = 40;
+  @Input() apParallax = 40;
 
   ngAfterViewInit(): void {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     gsap.to(this.el.nativeElement, {
-      yPercent: this.appParallax,
+      yPercent: this.apParallax,
       ease: 'none',
       scrollTrigger: {
         trigger: this.el.nativeElement,
