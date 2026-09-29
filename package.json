@@ -9,7 +9,7 @@
     "pretest": "node scripts/gerar-ambiente.mjs",
     "test": "ng test --watch=false",
     "test:watch": "ng test",
-    "test:ci": "ng test --watch=false --coverage",
+    "test:ci": "ng test --watch=false",
     "prelint": "node scripts/gerar-ambiente.mjs",
     "lint": "ng lint",
     "e2e": "playwright test",
