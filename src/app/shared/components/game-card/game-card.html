@@ -1,0 +1,125 @@
+@if (variant() === 'featured') {
+  <article class="game-card featured card card-glow-purple" [routerLink]="['/jogo', game().id]">
+    <div class="card-image">
+      <img [src]="game().background_image" [alt]="game().name" loading="lazy" />
+      <div class="image-overlay"></div>
+      <div class="card-badges">
+        @if (metacritic() > 0) {
+          <span class="badge badge-gold">{{ metacritic() }}</span>
+        }
+        @if (game().rating > 0) {
+          <span class="badge badge-purple">{{ rating().toFixed(1) }}</span>
+        }
+      </div>
+    </div>
+    <div class="card-content">
+      <div class="card-meta">
+        @if (showGenres()) {
+          <div class="genres">
+            @for (genre of genres(); track genre) {
+              <span class="badge badge-cyan">{{ genre }}</span>
+            }
+          </div>
+        }
+        @if (showPlatforms()) {
+          <div class="platforms">
+            @for (platform of platforms(); track platform) {
+              <span class="platform-tag">{{ platform }}</span>
+            }
+          </div>
+        }
+      </div>
+      <h3 class="card-title">{{ game().name }}</h3>
+      @if (game().released) {
+        <p class="card-release">📅 {{ formatDate(game().released) }}</p>
+      }
+      <div class="card-footer">
+        <app-rating [value]="rating()" [max]="5" [size]="'sm'" />
+        <span class="rating-count">({{ game().ratings_count || 0 }})</span>
+      </div>
+    </div>
+  </article>
+} @else if (variant() === 'compact') {
+  <a class="game-card compact card" [routerLink]="['/jogo', game().id]">
+    <div class="card-image">
+      <img [src]="game().background_image" [alt]="game().name" loading="lazy" />
+      <div class="image-overlay"></div>
+    </div>
+    <div class="card-content">
+      <h4 class="card-title">{{ game().name }}</h4>
+      <div class="card-meta">
+        @if (showRating() && metacritic() > 0) {
+          <span class="badge badge-gold">{{ metacritic() }}</span>
+        }
+        <span class="release-date">{{ formatDate(game().released) }}</span>
+      </div>
+    </div>
+  </a>
+} @else {
+  <article class="game-card default card card-glow-purple" [routerLink]="['/jogo', game().id]">
+    <div class="card-image">
+      <img [src]="game().background_image" [alt]="game().name" loading="lazy" />
+      <div class="image-overlay"></div>
+      <div class="card-badges">
+        @if (metacritic() > 0) {
+          <span class="badge badge-gold">{{ metacritic() }}</span>
+        }
+        @if (rating() > 0) {
+          <span class="badge badge-purple">{{ rating().toFixed(1) }}</span>
+        }
+      </div>
+      <div class="card-overlay">
+        <button class="btn btn-primary btn-sm" (click)="$event.stopPropagation()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+          Ver detalhes
+        </button>
+      </div>
+    </div>
+    <div class="card-content">
+      <div class="card-meta">
+        @if (showGenres()) {
+          <div class="genres">
+            @for (genre of genres(); track genre) {
+              <span class="badge badge-cyan">{{ genre }}</span>
+            }
+          </div>
+        }
+        @if (showPlatforms()) {
+          <div class="platforms">
+            @for (platform of platforms(); track platform) {
+              <span class="platform-tag">{{ platform }}</span>
+            }
+          </div>
+        }
+      </div>
+      <h3 class="card-title">{{ game().name }}</h3>
+      @if (game().released) {
+        <p class="card-release">📅 {{ formatDate(game().released) }}</p>
+      }
+      <div class="card-footer">
+        @if (showRating()) {
+          <app-rating [value]="rating()" [max]="5" [size]="'sm'" />
+          <span class="rating-count">({{ game().ratings_count || 0 }})</span>
+        }
+        @if (game().playtime > 0) {
+          <span class="playtime">⏱️ {{ game().playtime }}h</span>
+        }
+      </div>
+    </div>
+  </article>
+}
+
+<ng-template #skeleton>
+  <article class="game-card default card skeleton">
+    <div class="card-image skeleton" style="aspect-ratio: 16/10;"></div>
+    <div class="card-content">
+      <div class="card-meta">
+        <div class="genres"><span class="skeleton" style="width: 80px; height: 24px;"></span></div>
+      </div>
+      <h3 class="skeleton" style="width: 70%;">&nbsp;</h3>
+      <p class="skeleton" style="width: 50%;"></p>
+    </div>
+  </article>
+</ng-template>

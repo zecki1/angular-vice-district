@@ -1,0 +1,79 @@
+<div class="mini-games-page">
+  <header class="page-header section">
+    <div class="container">
+      <div class="page-header-content">
+        <div>
+          <h1 class="page-title">Mini-Games</h1>
+          <p class="page-subtitle">Jogos rápidos para se divertir entre uma partida e outra</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div class="category-filter" role="tablist" aria-label="Filtrar por categoria">
+        @for (cat of categories(); track cat) {
+          <button
+            role="tab"
+            [attr.aria-selected]="selectedCategory() === cat"
+            [class.active]="selectedCategory() === cat"
+            (click)="selectCategory(cat)"
+            class="category-btn"
+          >
+            {{ cat === 'all' ? 'Todos' : cat }}
+          </button>
+        }
+      </div>
+
+      <div class="mini-games-grid grid-auto-fit" role="list">
+        @for (game of filteredGames(); track game.id) {
+          <article class="mini-game-card card card-glow-{{ game.color }}" role="listitem" [routerLink]="['/mini-games', game.id]">
+            <div class="mini-game-icon" [style.color]="'var(--color-neon-' + game.color + ')'">{{ game.icon }}</div>
+            <div class="mini-game-content">
+              <span class="mini-game-category badge badge-{{ game.color }}">{{ game.category }}</span>
+              <h3 class="mini-game-title">{{ game.title }}</h3>
+              <p class="mini-game-desc">{{ game.description }}</p>
+              <div class="mini-game-meta">
+                <span class="mini-game-time">⏱️ {{ game.time }}</span>
+              </div>
+            </div>
+            <div class="mini-game-arrow">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" aria-labelledby="leaderboard-title">
+    <div class="container">
+      <h2 id="leaderboard-title" class="section-title" style="text-align: center; margin-bottom: 2rem;">Ranking Global</h2>
+      <div class="leaderboard-grid grid-auto-fit" style="max-width: 900px; margin: 0 auto;">
+        @for (game of games; track game.id) {
+          <div class="leaderboard-card card">
+            <div class="leaderboard-header" [style.border-color]="'var(--color-neon-' + game.color + ')'">
+              <span class="leaderboard-icon">{{ game.icon }}</span>
+              <h3>{{ game.title }}</h3>
+            </div>
+            <ol class="leaderboard-list">
+              @for (entry of getMockLeaderboard(); track entry.rank) {
+                <li class="leaderboard-entry" [class.top-three]="entry.rank <= 3">
+                  <span class="leaderboard-rank" [class.gold]="entry.rank === 1" [class.silver]="entry.rank === 2" [class.bronze]="entry.rank === 3">
+                    #{{ entry.rank }}
+                  </span>
+                  <span class="leaderboard-name">{{ entry.name }}</span>
+                  <span class="leaderboard-score">{{ entry.score }}</span>
+                </li>
+              }
+            </ol>
+            <a [routerLink]="['/mini-games', game.id]" class="btn btn-primary btn-sm w-full mt-3">Jogar e competir</a>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+</div>

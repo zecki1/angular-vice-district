@@ -1,0 +1,304 @@
+<section #secao id="cinema" class="cinema" aria-labelledby="cinema-titulo">
+  <div class="cinema-cabecalho">
+    <p class="cinema-eyebrow">Em cartaz — Cartaz 8K</p>
+    <h2 id="cinema-titulo" class="cinema-titulo display">A sua bilheteria</h2>
+    <p class="cinema-descricao">
+      Os filmes que estão bombando no cinema, em cartaz agora. Escolha um perfil,
+      salve na sua lista e volte depois para decidir.
+    </p>
+  </div>
+
+  <div class="cinema-perfis" aria-label="Perfis de usuário">
+    <div class="cinema-perfis-botoes">
+      @for (perfil of perfisDisponiveis(); track perfil.id) {
+        <button
+          type="button"
+          class="cinema-perfil"
+          [class.ativo]="perfilAtivo()?.id === perfil.id"
+          (click)="selecionarPerfil(perfil.id)"
+        >
+          <span class="cinema-perfil-bola" [style.background]="perfil.cor"></span>
+          {{ perfil.nome }}
+        </button>
+      }
+
+      <form class="cinema-perfil-form" (ngSubmit)="criarPerfil(novoNome() || 'Novo perfil')">
+        <label class="cinema-perfil-label" for="novoNome">Novo perfil</label>
+        <input
+          id="novoNome"
+          class="cinema-perfil-input"
+          type="text"
+          maxlength="20"
+          placeholder="Seu nome"
+          [(ngModel)]="novoNome"
+          name="novoNome"
+        />
+        <button type="submit" class="cinema-perfil-criar">Criar</button>
+      </form>
+    </div>
+    <p class="cinema-perfil-info">
+      @if (perfilAtivo(); as ativo) {
+        Sessão de <strong>{{ ativo.nome }}</strong> — use os botões nos filmes para
+        salvar na sua lista.
+      } @else {
+        <strong>Sem perfil selecionado:</strong> salve suas escolhas criando um perfil.
+      }
+    </p>
+  </div>
+
+  @if (erro()) {
+    <p class="cinema-erro" role="alert">{{ erro() }}</p>
+  }
+
+  <div class="cinema-destaque" data-destaque aria-label="Filme em destaque">
+    @if (emCartazCarregando()) {
+      <div class="cinema-destaque-vazio"></div>
+    } @else if (destaque(); as filme) {
+      <div class="cinema-destaque-fundo" data-destaque-fundo>
+        <img class="cinema-destaque-capa" [src]="filme.capa" [alt]="''" loading="lazy" />
+      </div>
+      <div class="cinema-destaque-conteudo" data-destaque-conteudo>
+        <p class="cinema-destaque-meta">
+          <span class="cinema-destaque-badge">Nº 1 em cartaz hoje</span>
+          <span aria-hidden="true">·</span>
+          <span>{{ filme.ano || 'Cartaz' }}</span>
+          <span aria-hidden="true">·</span>
+          <span>{{ filme.avaliacao ? '★ ' + filme.avaliacao.toFixed(1) : 'Sem nota' }}</span>
+        </p>
+        <h3 class="cinema-destaque-nome display">{{ filme.nome }}</h3>
+        <p class="cinema-destaque-descricao">{{ filme.descricao }}</p>
+        <div class="cinema-destaque-acoes">
+          <a class="cinema-destaque-assistir" href="#trailer">
+            <span class="cinema-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span> Assistir à prévia
+          </a>
+          <button
+            type="button"
+            class="cinema-salvar cinema-salvar-gigante"
+            [class.salvo]="destaqueNaLista()"
+            (click)="salvarDestaque()"
+          >
+            {{ destaqueNaLista() ? '✓ Na sua lista' : '+ Minha lista' }}
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (!emCartazCarregando() && emCartaz().length > 0) {
+    <div class="cinema-trilha" #trilha aria-label="Filmes em cartaz">
+      @for (filme of emCartaz(); track filme.id) {
+        <button
+          type="button"
+          class="cinema-capa"
+          [class.ativo]="destaque()?.id === filme.id"
+          (click)="escolherDestaque(filme)"
+        >
+          <img class="cinema-capa-foto" [src]="filme.cartaz" [alt]="filme.nome" loading="lazy" />
+          <span class="cinema-capa-nome">{{ filme.nome }}</span>
+        </button>
+      }
+    </div>
+  }
+
+  <nav class="cinema-abas" role="tablist" aria-label="Abas de filmes">
+    <button
+      type="button"
+      class="cinema-aba"
+      [class.ativo]="aba() === 'sugestoes'"
+      (click)="aba.set('sugestoes')"
+      role="tab"
+      [attr.aria-selected]="aba() === 'sugestoes'"
+    >
+      Sugestões
+    </button>
+    <button
+      type="button"
+      class="cinema-aba"
+      [class.ativo]="aba() === 'atores'"
+      (click)="aba.set('atores')"
+      role="tab"
+      [attr.aria-selected]="aba() === 'atores'"
+    >
+      Por ator
+    </button>
+    <button
+      type="button"
+      class="cinema-aba"
+      [class.ativo]="aba() === 'lista'"
+      (click)="aba.set('lista')"
+      role="tab"
+      [attr.aria-selected]="aba() === 'lista'"
+    >
+      Minha lista
+    </button>
+  </nav>
+
+  @if (aba() === 'sugestoes') {
+    <div class="cinema-controle" role="tabpanel">
+      <div class="cinema-controle-linha">
+        <label class="cinema-filtro-label" for="genero">
+          Gênero
+          <select id="genero" class="cinema-filtro" (change)="trocarGenero($event)">
+            <option value="0">Todos</option>
+            @for (g of generos(); track g.id) {
+              <option [value]="g.id">{{ g.nome }}</option>
+            }
+          </select>
+        </label>
+
+        <button
+          type="button"
+          class="cinema-sugerir"
+          (click)="buscarSugestoes()"
+          [disabled]="sugestoesCarregando()"
+        >
+          Sugerir filmes
+        </button>
+      </div>
+
+      <div class="cinema-grade" role="list" aria-label="Títulos sugeridos">
+        @if (sugestoesCarregando()) {
+          @for (vazio of pista; track $index) {
+            <div class="cinema-card cinema-card-vazio" role="listitem" aria-hidden="true"></div>
+          }
+        } @else {
+          @for (titulo of sugestoes(); track titulo.tipo + '-' + titulo.id) {
+            <article class="cinema-card" role="listitem">
+              <img
+                class="cinema-cartaz"
+                [src]="titulo.cartaz"
+                [alt]="titulo.nome"
+                loading="lazy"
+              />
+              <h3 class="cinema-nome">{{ titulo.nome }}</h3>
+              <p class="cinema-ano">{{ titulo.ano || '—' }}</p>
+              <button
+                type="button"
+                class="cinema-salvar"
+                [class.salvo]="estaNaLista(titulo)"
+                (click)="alterarLista(titulo)"
+              >
+                {{ estaNaLista(titulo) ? 'Na lista ✓' : 'Salvar' }}
+              </button>
+            </article>
+          }
+          @empty {
+            <p class="cinema-vazio">Nenhuma sugestão ainda.</p>
+          }
+        }
+      </div>
+    </div>
+  }
+
+  @if (aba() === 'atores') {
+    <div class="cinema-atores" role="tabpanel">
+      <form class="cinema-busca" (ngSubmit)="buscarAtores()">
+        <label class="cinema-busca-label" for="buscaAtor">
+          Buscar ator
+          <input
+            id="buscaAtor"
+            class="cinema-busca-input"
+            type="text"
+            placeholder="Ex.: Al Pacino"
+            [(ngModel)]="busca"
+            name="busca"
+          />
+        </label>
+        <button
+          type="submit"
+          class="cinema-sugerir"
+          [disabled]="!busca().trim() || atoresCarregando()"
+        >
+          Buscar
+        </button>
+      </form>
+
+      @if (atoresCarregando()) {
+        <p class="cinema-vazio">Buscando atores...</p>
+      }
+
+      @if (!atoresCarregando() && atores().length === 0 && busca().trim()) {
+        <p class="cinema-vazio">Nenhum ator encontrado.</p>
+      }
+
+      @for (ator of atores(); track ator.id) {
+        <button type="button" class="cinema-ator" (click)="escolherAtor(ator)">
+          <img class="cinema-ator-foto" [src]="ator.foto" [alt]="''" loading="lazy" />
+          <span class="cinema-ator-nome">{{ ator.nome }}</span>
+        </button>
+      }
+
+      @if (atorEscolhido(); as ator) {
+        <h3 class="cinema-ator-titulo">Filmes de {{ ator.nome }}</h3>
+        <div class="cinema-grade" role="list" aria-label="Filmografia">
+          @if (filmografiaCarregando()) {
+            @for (vazio of pista; track $index) {
+              <div class="cinema-card cinema-card-vazio" role="listitem" aria-hidden="true"></div>
+            }
+          } @else {
+            @for (titulo of filmografia(); track 'f-' + titulo.id) {
+              <article class="cinema-card" role="listitem">
+                <img
+                  class="cinema-cartaz"
+                  [src]="titulo.cartaz"
+                  [alt]="titulo.nome"
+                  loading="lazy"
+                />
+                <h3 class="cinema-nome">{{ titulo.nome }}</h3>
+                <p class="cinema-ano">{{ titulo.ano || '—' }}</p>
+                <button
+                  type="button"
+                  class="cinema-salvar"
+                  [class.salvo]="estaNaLista(titulo)"
+                  (click)="alterarLista(titulo)"
+                >
+                  {{ estaNaLista(titulo) ? 'Na lista ✓' : 'Salvar' }}
+                </button>
+              </article>
+            }
+          }
+        </div>
+      }
+    </div>
+  }
+
+  @if (aba() === 'lista') {
+    <div class="cinema-lista" role="tabpanel">
+      @if (perfilAtivo(); as ativo) {
+        <div class="cinema-controle-linha">
+          <h3 class="cinema-ator-titulo">Lista de {{ ativo.nome }}</h3>
+          <button type="button" class="cinema-sugerir cinema-sugerir-remover" (click)="removerPerfil(ativo.id)">
+            Apagar perfil
+          </button>
+        </div>
+
+        <div class="cinema-grade" role="list" aria-label="Minha lista">
+          @for (titulo of listaAtual(); track 'l-' + titulo.tipo + '-' + titulo.id) {
+            <article class="cinema-card" role="listitem">
+              <img
+                class="cinema-cartaz"
+                [src]="titulo.cartaz"
+                [alt]="titulo.nome"
+                loading="lazy"
+              />
+              <h3 class="cinema-nome">{{ titulo.nome }}</h3>
+              <p class="cinema-ano">{{ titulo.ano || '—' }}</p>
+              <button
+                type="button"
+                class="cinema-salvar salvo"
+                (click)="alterarLista(titulo)"
+              >
+                Remover
+              </button>
+            </article>
+          }
+          @empty {
+            <p class="cinema-vazio">Sua lista está vazia. Explore os cartazes e salve filmes!</p>
+          }
+        </div>
+      } @else {
+        <p class="cinema-vazio">Crie ou selecione um perfil para começar a sua lista.</p>
+      }
+    </div>
+  }
+</section>

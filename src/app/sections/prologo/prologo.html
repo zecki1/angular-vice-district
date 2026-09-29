@@ -1,0 +1,15 @@
+<section id="prologo" class="prologo">
+  <div class="prologo-imagem" [apParallax]="28" aria-hidden="true">
+    <div class="prologo-sol"></div>
+    <div class="prologo-palmeiras"></div>
+    <div class="prologo-gradiente"></div>
+  </div>
+  <div class="prologo-conteudo">
+    <p class="prologo-eyebrow">Prólogo</p>
+    <h2 class="prologo-titulo display">A noite em que<br />tudo começa</h2>
+    @for (passo of passos; track passo) {
+      <p class="prologo-passo">{{ passo }}</p>
+    }
+    <a class="prologo-cta" href="#personagens">Continuar</a>
+  </div>
+</section>

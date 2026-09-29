@@ -1,0 +1,23 @@
+<section class="banner-novidades" aria-labelledby="banner-novidades-titulo">
+  <p id="banner-novidades-titulo" class="banner-novidades-rotulo">
+    <span class="banner-novidades-ponto" aria-hidden="true"></span>
+    Próximos lançamentos no cinema
+  </p>
+
+  @if (carregando()) {
+    <div class="banner-novidades-carregando" aria-hidden="true"></div>
+  } @else if (novidades().length === 0) {
+    <p class="banner-novidades-vazio">{{ erro() || 'Sem novidades por enquanto.' }}</p>
+  } @else {
+    <div #faixa class="banner-novidades-faixa">
+      @for (item of repetidas(); track $index; let i = $index) {
+        <div class="banner-novidades-item">
+          <span class="banner-novidades-numero" aria-hidden="true">{{ (i % (novidades().length || 1)) + 1 }}</span>
+          <img class="banner-novidades-cartaz" [src]="item.cartaz" [alt]="''" loading="lazy" />
+          <span class="banner-novidades-nome">{{ item.nome }}</span>
+          <span class="banner-novidades-ano">{{ item.ano || '—' }}</span>
+        </div>
+      }
+    </div>
+  }
+</section>

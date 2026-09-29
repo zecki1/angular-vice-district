@@ -1,0 +1,26 @@
+<section class="galeria">
+  <div class="galeria-cabecalho">
+    <p class="galeria-eyebrow">Série original · Vice District</p>
+    <h2 class="galeria-titulo display">A cidade em movimento</h2>
+  </div>
+  <div #trilha class="galeria-trilha">
+    @for (painel of paineis; track painel.titulo; let i = $index) {
+      <article class="galeria-painel" [style.--cor-painel]="painel.cor">
+        <span class="galeria-indice" aria-hidden="true">{{ i + 1 }}</span>
+        <div class="galeria-cena" aria-hidden="true">
+          <span class="galeria-grab">{{ painel.eyebrow }}</span>
+          @if (painel.capa) {
+            <img class="galeria-capa" [src]="painel.capa" [alt]="''" loading="lazy" />
+            <span class="galeria-velo"></span>
+          } @else {
+            <span class="galeria-sol"></span>
+            <span class="galeria-horizonte"></span>
+          }
+          <span class="galeria-play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></span>
+        </div>
+        <h3 class="galeria-painel-titulo">{{ painel.titulo }}</h3>
+        <p class="galeria-painel-legenda">{{ painel.legenda }}</p>
+      </article>
+    }
+  </div>
+</section>

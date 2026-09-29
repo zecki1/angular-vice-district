@@ -1,0 +1,208 @@
+<main class="home-page">
+  <section class="hero section" aria-labelledby="hero-title">
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-text fade-in-up">
+          <span class="hero-badge badge badge-purple">Nova Versão 2.0</span>
+          <h1 id="hero-title" class="hero-title fade-in-up stagger-1">
+            Sua Central de <span class="game-gradient-text">Jogos</span>
+          </h1>
+          <p class="hero-subtitle fade-in-up stagger-2">
+            Descubra lançamentos, acompanhe notícias, encontre as melhores ofertas
+            e jogue mini-games exclusivos. Tudo em um só lugar.
+          </p>
+          <div class="hero-actions fade-in-up stagger-3">
+            <a routerLink="/jogos" class="btn btn-primary btn-lg">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                <line x1="12" y1="22.08" x2="12" y2="12"/>
+              </svg>
+              Explorar Jogos
+            </a>
+            <a routerLink="/noticias" class="btn btn-secondary btn-lg">Últimas Notícias</a>
+          </div>
+          <div class="hero-stats fade-in-up stagger-4">
+            <div class="stat">
+              <span class="stat-value">500k+</span>
+              <span class="stat-label">Jogos</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">50k+</span>
+              <span class="stat-label">Notícias</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">100+</span>
+              <span class="stat-label">Ofertas/Dia</span>
+            </div>
+            <div class="stat">
+              <span class="stat-value">10k+</span>
+              <span class="stat-label">Players</span>
+            </div>
+          </div>
+        </div>
+        <div class="hero-visual fade-in-up stagger-5">
+          <div class="hero-carousel">
+            <div class="carousel-track">
+              @for (game of featuredGames(); track game.id) {
+                <div class="carousel-slide">
+                  <img [src]="game.background_image" [alt]="game.name" />
+                  <div class="slide-overlay">
+                    <div class="slide-content">
+                      <span class="badge badge-purple">DESTAQUE</span>
+                      <h3>{{ game.name }}</h3>
+                      <p>Descubra mais sobre este jogo incrível...</p>
+                      <a [routerLink]="['/jogo', game.id]" class="btn btn-primary btn-sm">Ver Detalhes</a>
+                    </div>
+                  </div>
+                </div>
+              } @empty {
+                <div class="carousel-slide skeleton">
+                  <div class="skeleton" style="width: 100%; height: 100%;"></div>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="releases-title">
+    <div class="container">
+      <header class="section-header">
+        <div>
+          <h2 id="releases-title" class="section-title">Próximos Lançamentos</h2>
+          <p class="section-subtitle">Os jogos mais aguardados dos próximos meses</p>
+        </div>
+        <a routerLink="/lancamentos" class="btn btn-ghost">Ver todos →</a>
+      </header>
+      <div class="grid-auto-fit" role="list">
+        @for (game of popularGames(); track game.id) {
+          <app-game-card [game]="game" variant="default" role="listitem" />
+        } @empty {
+          @for (i of [1,2,3,4,5,6]; track i) {
+            <app-game-card [game]="skeletonGame()" variant="default" />
+          }
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" aria-labelledby="news-title">
+    <div class="container">
+      <header class="section-header">
+        <div>
+          <h2 id="news-title" class="section-title">Últimas Notícias</h2>
+          <p class="section-subtitle">Fique por dentro do mundo dos games</p>
+        </div>
+        <a routerLink="/noticias" class="btn btn-ghost">Ver todas →</a>
+      </header>
+      <div class="news-grid" role="list">
+        @for (article of latestNews(); track article.id) {
+          <article class="news-card card" role="listitem">
+            <div class="news-image">
+              <img [src]="article.image_url" [alt]="article.title" loading="lazy" />
+              <span class="news-source badge badge-cyan">{{ article.source }}</span>
+            </div>
+            <div class="news-content">
+              <time class="news-date">{{ formatDate(article.published_at) }}</time>
+              <h3 class="news-title"><a [href]="article.url" target="_blank" rel="noopener">{{ article.title }}</a></h3>
+              <p class="news-excerpt">{{ article.description }}</p>
+              <a [href]="article.url" target="_blank" rel="noopener" class="news-link">Ler mais →</a>
+            </div>
+          </article>
+        } @empty {
+          @for (i of [1,2,3,4]; track i) {
+            <article class="news-card card skeleton" role="listitem">
+              <div class="news-image skeleton" style="aspect-ratio: 16/9;"></div>
+              <div class="news-content">
+                <div class="skeleton" style="width: 80px; height: 16px;"></div>
+                <div class="skeleton" style="width: 100%; height: 24px;"></div>
+                <div class="skeleton" style="width: 80%; height: 16px;"></div>
+                <div class="skeleton" style="width: 60%; height: 16px;"></div>
+              </div>
+            </article>
+          }
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="free-title">
+    <div class="container">
+      <header class="section-header">
+        <div>
+          <h2 id="free-title" class="section-title">Jogos Grátis Esta Semana</h2>
+          <p class="section-subtitle">Pegue antes que acabe - atualizações toda quinta-feira</p>
+        </div>
+        <a routerLink="/gratis" class="btn btn-ghost">Ver todos →</a>
+      </header>
+      <div class="grid-auto-fit" role="list">
+        @for (game of freeGames(); track game.id) {
+          <article class="free-game-card card card-glow-pink" role="listitem">
+            <div class="free-game-image">
+              <img [src]="game.image_url" [alt]="game.title" loading="lazy" />
+              <span class="free-badge badge badge-pink">GRÁTIS</span>
+            </div>
+            <div class="free-game-content">
+              <h3 class="free-game-title">{{ game.title }}</h3>
+              <p class="free-game-desc">{{ game.description }}</p>
+              <div class="free-game-meta">
+                <span class="free-game-platform">🖥️ {{ game.platforms.join(', ') }}</span>
+                <span class="free-game-ends">Até {{ formatDate(game.end_date) }}</span>
+              </div>
+              <a [href]="game.url" target="_blank" rel="noopener" class="btn btn-primary btn-sm w-full">Resgatar na Epic Games</a>
+            </div>
+          </article>
+        } @empty {
+          @for (i of [1,2,3]; track i) {
+            <article role="listitem" class="free-game-card card skeleton">
+              <div class="free-game-image skeleton" style="aspect-ratio: 16/9;"></div>
+              <div class="free-game-content">
+                <div class="skeleton" style="width: 60%; height: 24px;"></div>
+                <div class="skeleton" style="width: 100%; height: 16px;"></div>
+                <div class="skeleton" style="width: 80%; height: 16px;"></div>
+              </div>
+            </article>
+          }
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt" aria-labelledby="minigames-title">
+    <div class="container">
+      <header class="section-header">
+        <div>
+          <h2 id="minigames-title" class="section-title">Mini-Games</h2>
+          <p class="section-subtitle">Diversão rápida entre uma partida e outra</p>
+        </div>
+        <a routerLink="/mini-games" class="btn btn-ghost">Jogar agora →</a>
+      </header>
+      <div class="minigames-grid grid-auto-fit" role="list">
+        @for (minigame of miniGames(); track minigame.id) {
+          <article class="minigame-card card card-glow-cyan" role="listitem" [routerLink]="['/mini-games', minigame.id]">
+            <div class="minigame-icon">{{ minigame.icon }}</div>
+            <h3 class="minigame-title">{{ minigame.title }}</h3>
+            <p class="minigame-desc">{{ minigame.description }}</p>
+            <div class="minigame-meta">
+              <span class="badge badge-cyan">{{ minigame.category }}</span>
+              <span class="minigame-time">⏱️ {{ minigame.time }}</span>
+            </div>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="section cta-section" aria-labelledby="cta-title">
+    <div class="container">
+      <div class="cta-content">
+        <h2 id="cta-title" class="cta-title">Pronto para jogar?</h2>
+        <p class="cta-text">Junte-se a milhares de gamers e nunca perca um lançamento, oferta ou notícia importante.</p>
+        <a routerLink="/jogos" class="btn btn-primary btn-lg">Começar Agora</a>
+      </div>
+    </div>
+  </section>
+</main>

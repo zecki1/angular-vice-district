@@ -1,0 +1,9 @@
+<div class="preloader-fundo" [class.oculto]="oculto()" aria-hidden="true">
+  <p class="preloader-label">VICE DISTRICT</p>
+  <div class="preloader-contador" role="status" aria-live="polite">
+    <span>{{ progresso() }}</span><span class="preloader-pct">%</span>
+  </div>
+  <div class="preloader-barra">
+    <div class="preloader-barra-preenchida" [style.width.%]="progresso()"></div>
+  </div>
+</div>

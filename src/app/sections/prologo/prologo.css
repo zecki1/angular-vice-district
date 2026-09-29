@@ -1,0 +1,102 @@
+.prologo {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  overflow: hidden;
+}
+
+.prologo-imagem {
+  position: absolute;
+  inset: -10% 0;
+  will-change: transform;
+}
+
+.prologo-sol {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(46vw, 30rem);
+  height: min(46vw, 30rem);
+  border-radius: 9999px;
+  background: radial-gradient(circle, var(--neon-pink) 0%, var(--neon-pink) 30%, transparent 72%);
+  opacity: 0.7;
+  filter: blur(2px);
+}
+
+.prologo-palmeiras {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 38vh;
+  background:
+    linear-gradient(12deg, transparent 0 40%, var(--superficie) 40.5%),
+    repeating-linear-gradient(95deg, var(--superficie-alt) 0 6px, transparent 6px 90px);
+  opacity: 0.6;
+}
+
+.prologo-gradiente {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top, var(--fundo) 0%, transparent 30%),
+    linear-gradient(to bottom, var(--fundo) 0%, transparent 45%);
+}
+
+.prologo-conteudo {
+  position: relative;
+  z-index: 2;
+  padding: 2rem;
+  max-width: 44rem;
+}
+
+.prologo-eyebrow {
+  margin: 0 0 1rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--neon-pink);
+}
+
+.prologo-titulo {
+  margin: 0 0 1.5rem;
+  font-size: clamp(2.2rem, 6vw, 4.5rem);
+}
+
+.prologo-passo {
+  margin: 0 0 0.75rem;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--texto-suave);
+  max-width: 34rem;
+}
+
+.prologo-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1.4rem;
+  padding: 0.85rem 1.9rem;
+  border-radius: 8px;
+  background: var(--neon-pink);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 700;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.prologo-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px var(--meia-agua);
+}
+
+@media (min-width: 720px) {
+  .prologo {
+    grid-template-columns: 1fr 1fr;
+  }
+  .prologo-conteudo {
+    grid-column: 2;
+  }
+}

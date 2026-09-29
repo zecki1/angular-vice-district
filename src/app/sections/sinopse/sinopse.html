@@ -1,0 +1,30 @@
+<section class="sinopse" aria-labelledby="sinopse-titulo">
+  @if (carregando()) {
+    <div class="sinopse-carregando" aria-hidden="true"></div>
+  } @else if (filme(); as filme) {
+    <div class="sinopse-fundo" aria-hidden="true">
+      <img class="sinopse-capa" [src]="filme.capa" [alt]="''" loading="lazy" />
+      <span class="sinopse-velo"></span>
+    </div>
+
+    <div class="sinopse-conteudo">
+      <div class="sinopse-cabecalho">
+        <p class="sinopse-eyebrow">Destaque da semana</p>
+        <h2 id="sinopse-titulo" class="sinopse-titulo display">{{ filme.nome }}</h2>
+        <p class="sinopse-meta">
+          <span class="sinopse-nota">
+            <span class="sinopse-estrela" aria-hidden="true">★</span>
+            {{ filme.avaliacao.toFixed(1) }}
+          </span>
+          <span aria-hidden="true">·</span>
+          <span>{{ filme.ano || 'Ano desconhecido' }}</span>
+        </p>
+      </div>
+      <div #etapa class="sinopse-etapa">
+        @for (paragrafo of paragrafos(); track paragrafo; let i = $index) {
+          <p class="sinopse-linha">{{ paragrafo }}</p>
+        }
+      </div>
+    </div>
+  }
+</section>

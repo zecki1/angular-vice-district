@@ -1,0 +1,115 @@
+<div class="deals-page">
+  <header class="page-header section">
+    <div class="container">
+      <div class="page-header-content">
+        <div>
+          <h1 class="page-title">Ofertas</h1>
+          <p class="page-subtitle">Melhores promoções da Steam, Epic, GOG e mais</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div class="deals-toolbar">
+        <div class="toolbar-group">
+          <label class="toolbar-label" for="filtro-loja">Loja</label>
+          <select id="filtro-loja" class="input select" [value]="selectedStore()" (change)="onStoreChange($any($event.target).value)">
+            <option value="">Todas as lojas</option>
+            @for (store of stores(); track store.storeID) {
+              <option [value]="store.storeID">{{ store.storeName }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="toolbar-group">
+          <label class="toolbar-label" for="filtro-ordem">Ordenar</label>
+          <select id="filtro-ordem" class="input select" [value]="sortBy()" (change)="onSortChange($any($event.target).value)">
+            <option value="Deal Rating">Melhor avaliação</option>
+            <option value="Price">Menor preço</option>
+            <option value="Savings">Maior desconto</option>
+            <option value="Recent">Mais recentes</option>
+          </select>
+        </div>
+
+        <div class="toolbar-stats">
+          {{ filteredDeals().length }} ofert{{ filteredDeals().length !== 1 ? 'as' : 'a' }} ativa{{ filteredDeals().length !== 1 ? 's' : '' }}
+        </div>
+      </div>
+
+      <div class="deals-grid grid-auto-fit" role="list">
+        @for (deal of filteredDeals(); track deal.id) {
+          <article class="deal-card card card-glow-cyan" role="listitem">
+            <div class="deal-image">
+              @if (deal.game_slug) {
+                <a [routerLink]="['/jogo', deal.game_id]">
+                  <img [src]="'https://cdn.cloudflare.steamstatic.com/steam/apps/' + deal.game_id + '/header.jpg'" [alt]="deal.game_name" loading="lazy" />
+                </a>
+              } @else {
+                <div class="placeholder-image">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                  </svg>
+                </div>
+              }
+              <span class="discount-badge" [class]="getDiscountBadge(deal.discount_percent)">{{ deal.discount_percent }}% OFF</span>
+              <span class="store-badge badge badge-purple">{{ getStoreName(deal.store_id) }}</span>
+            </div>
+            <div class="deal-content">
+              <h3 class="deal-title">
+                @if (deal.game_slug) {
+                  <a [routerLink]="['/jogo', deal.game_id]">{{ deal.game_name }}</a>
+                } @else {
+                  {{ deal.game_name }}
+                }
+              </h3>
+              <div class="deal-prices">
+                <span class="deal-price-new">{{ formatPrice(deal.price_new) }}</span>
+                @if (deal.price_old > deal.price_new) {
+                  <span class="deal-price-old">{{ formatPrice(deal.price_old) }}</span>
+                }
+              </div>
+              <div class="deal-meta">
+                <span class="deal-rating">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  {{ deal.rating?.toFixed(1) || 'N/A' }}
+                </span>
+                @if (deal.metacritic > 0) {
+                  <span class="deal-metacritic badge badge-gold">{{ deal.metacritic }}</span>
+                }
+                @if (deal.steam_rating_percent > 0) {
+                  <span class="deal-steam">{{ deal.steam_rating_text }}</span>
+                }
+              </div>
+              <a [routerLink]="['/jogo', deal.game_id]" class="btn btn-primary btn-sm w-full">Ver na Loja</a>
+            </div>
+          </article>
+        } @empty {
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <h3>Nenhuma oferta encontrada</h3>
+            <p>Tente alterar os filtros ou volte mais tarde.</p>
+          </div>
+        }
+      </div>
+
+      @if (!loading() && filteredDeals().length > 0) {
+        <div class="load-more-wrapper">
+          <button class="btn btn-secondary" (click)="loadMore()" [disabled]="loadingMore()">
+            @if (loadingMore()) {
+              <svg class="spinner" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"/>
+              </svg>
+              Carregando...
+            } @else {
+              Carregar mais ofertas
+            }
+          </button>
+        </div>
+      }
+    </div>
+  </section>
+</div>

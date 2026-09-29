@@ -1,0 +1,102 @@
+:host {
+  display: block;
+}
+
+.sinopse {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: var(--fundo);
+}
+
+.sinopse-carregando {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, var(--superficie), transparent);
+  background-size: 200% 100%;
+  animation: sinopse-varrer 1.4s linear infinite;
+}
+@keyframes sinopse-varrer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.sinopse-fundo,
+.sinopse-capa,
+.sinopse-velo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.sinopse-capa {
+  object-fit: cover;
+  z-index: 0;
+}
+.sinopse-velo {
+  z-index: 1;
+  background: linear-gradient(to right, var(--fundo) 18%, rgb(0 0 0 / 0.15) 60%),
+    linear-gradient(to top, var(--fundo), transparent 55%);
+}
+
+.sinopse-conteudo {
+  position: relative;
+  z-index: 2;
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+  display: grid;
+  gap: 2.5rem;
+}
+
+.sinopse-eyebrow {
+  margin: 0 0 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--neon-pink);
+}
+
+.sinopse-titulo {
+  margin: 0;
+  font-size: clamp(2.2rem, 6vw, 4.5rem);
+}
+
+.sinopse-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 1rem 0 0;
+  color: var(--texto-suave);
+}
+
+.sinopse-nota {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  color: var(--texto);
+}
+.sinopse-estrela {
+  color: #ffb02e;
+}
+
+.sinopse-etapa {
+  max-width: 44rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sinopse-linha {
+  margin: 0;
+  font-size: clamp(1.5rem, 3.6vw, 2.6rem);
+  line-height: 1.35;
+  color: var(--texto);
+  will-change: transform, opacity;
+}

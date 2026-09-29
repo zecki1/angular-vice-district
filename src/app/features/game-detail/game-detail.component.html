@@ -1,0 +1,228 @@
+<div class="game-detail-page">
+  @if (loading()) {
+    <div class="detail-skeleton section">
+      <div class="container">
+        <div class="skeleton" style="height: 400px; border-radius: var(--radius-2xl);"></div>
+        <div class="skeleton-grid grid-auto-fit" style="margin-top: 2rem;">
+          @for (i of [1,2,3,4]; track i) {
+            <div class="skeleton" style="height: 200px; border-radius: var(--radius-xl);"></div>
+          }
+        </div>
+      </div>
+    </div>
+  } @else if (error()) {
+    <div class="error-state section">
+      <div class="container">
+        <div class="empty-state">
+          <h2>{{ error() }}</h2>
+          <a routerLink="/jogos" class="btn btn-primary">Voltar aos jogos</a>
+        </div>
+      </div>
+    </div>
+  } @else if (game(); as g) {
+    <header class="detail-hero section" [style.background-image]="'linear-gradient(180deg, rgba(10,10,15,0.9) 0%, rgba(10,10,15,0.7) 50%, transparent 100%), url(' + g.background_image + ')'" style="background-size: cover; background-position: center;">
+      <div class="container">
+        <div class="detail-hero-content">
+          <div class="detail-meta">
+            @for (genre of getGenres().slice(0, 3); track genre) {
+              <span class="badge badge-cyan">{{ genre }}</span>
+            }
+            <span class="release-date">📅 {{ formatDate(g.released) }}</span>
+          </div>
+          <h1 class="detail-title">{{ g.name }}</h1>
+          <div class="detail-rating">
+            <app-rating [value]="g.rating" [max]="5" [size]="'lg'" [color]="'gold'" />
+            <span class="rating-text">{{ g.rating.toFixed(1) }} / 5 ({{ g.ratings_count || 0 }} avaliações)</span>
+            @if (g.metacritic > 0) {
+              <span class="metacritic badge badge-gold">Metacritic: {{ g.metacritic }}</span>
+            }
+          </div>
+          <p class="detail-description">{{ g.description_raw?.slice(0, 300) }}...</p>
+          <div class="detail-actions">
+            @if (g.website) {
+              <a [href]="g.website" target="_blank" rel="noopener" class="btn btn-primary btn-lg">Site Oficial</a>
+            }
+            <a [href]="'https://store.steampowered.com/app/' + g.id" target="_blank" rel="noopener" class="btn btn-secondary btn-lg">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5.52 16.34l-4.32 1.44c-.29.09-.57-.1-.57-.41V11.41c0-.31.28-.5.57-.41l4.32 1.44c.39.13.39.63 0 .76z"/></svg>
+              Ver na Steam
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section">
+      <div class="container">
+        <div class="detail-grid">
+          <div class="detail-main">
+            <div class="detail-section">
+              <h2 class="detail-section-title">Sobre o Jogo</h2>
+              <div class="detail-text" [innerHTML]="g.description"></div>
+            </div>
+
+            @if (screenshots().length > 0) {
+              <div class="detail-section">
+                <h2 class="detail-section-title">Capturas de Tela</h2>
+                <div class="screenshot-gallery">
+                  <button class="gallery-nav prev" (click)="prevScreenshot()" aria-label="Anterior">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                  </button>
+                  <div class="gallery-viewport">
+                    <img [src]="screenshots()[currentScreenshot()].image" [alt]="g.name + ' screenshot'" class="gallery-image" />
+                  </div>
+                  <button class="gallery-nav next" (click)="nextScreenshot()" aria-label="Próxima">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </button>
+                  <div class="gallery-thumbs">
+                    @for (shot of screenshots().slice(0, 8); track $index) {
+                      <button class="gallery-thumb" [class.active]="$index === currentScreenshot()" (click)="currentScreenshot.set($index)">
+                        <img [src]="shot.image" [alt]="g.name + ' screenshot ' + ($index + 1)" loading="lazy" />
+                      </button>
+                    }
+                  </div>
+                </div>
+              </div>
+            }
+
+            <div class="detail-section">
+              <h2 class="detail-section-title">Informações Técnicas</h2>
+              <dl class="detail-specs">
+                <div class="spec-row">
+                  <dt>Plataformas</dt>
+                  <dd>{{ getPlatforms().join(', ') || '—' }}</dd>
+                </div>
+                <div class="spec-row">
+                  <dt>Gêneros</dt>
+                  <dd>{{ getGenres().join(', ') || '—' }}</dd>
+                </div>
+                <div class="spec-row">
+                  <dt>Desenvolvedoras</dt>
+                  <dd>{{ getDevelopers().join(', ') || '—' }}</dd>
+                </div>
+                <div class="spec-row">
+                  <dt>Publicadoras</dt>
+                  <dd>{{ getPublishers().join(', ') || '—' }}</dd>
+                </div>
+                <div class="spec-row">
+                  <dt>Lojas</dt>
+                  <dd>{{ getStores().join(', ') || '—' }}</dd>
+                </div>
+                <div class="spec-row">
+                  <dt>Tempo médio</dt>
+                  <dd>{{ g.playtime || '—' }} horas</dd>
+                </div>
+                <div class="spec-row">
+                  <dt>ESRB</dt>
+                  <dd>{{ g.esrb_rating?.name || '—' }}</dd>
+                </div>
+                <div class="spec-row">
+                  <dt>Tags</dt>
+                  <dd>
+                    <div class="tags-list">
+                      @for (tag of getTags(); track tag) {
+                        <span class="tag badge badge-purple">{{ tag }}</span>
+                      }
+                    </div>
+                  </dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+
+          <aside class="detail-sidebar">
+            <div class="detail-card card">
+              <h3 class="card-heading">Lojas</h3>
+              <ul class="store-list">
+                @for (store of g.stores?.slice(0, 5) || []; track store.store.id) {
+                  <li>
+                    <a [href]="'https://' + store.store.domain" target="_blank" rel="noopener" class="store-link">
+                      <img [src]="store.store.image_background" [alt]="store.store.name" class="store-icon" loading="lazy" />
+                      <span>{{ store.store.name }}</span>
+                    </a>
+                  </li>
+                } @empty {
+                  <li class="no-stores">Nenhuma loja cadastrada</li>
+                }
+              </ul>
+            </div>
+
+            <div class="detail-card card">
+              <h3 class="card-heading">Estatísticas</h3>
+              <div class="stats-grid">
+                <div class="stat">
+                  <span class="stat-value">{{ g.ratings_count || 0 }}</span>
+                  <span class="stat-label">Avaliações</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-value">{{ g.reviews_text_count || 0 }}</span>
+                  <span class="stat-label">Reviews</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-value">{{ g.added || 0 }}</span>
+                  <span class="stat-label">Adicionado por</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-value">{{ g.suggestions_count || 0 }}</span>
+                  <span class="stat-label">Sugestões</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="detail-card card">
+              <h3 class="card-heading">Status dos Jogadores</h3>
+              @if (g.added_by_status) {
+                <div class="player-status">
+                  <div class="status-item">
+                    <span class="status-label">Jogando</span>
+                    <span class="status-value">{{ g.added_by_status.playing }}</span>
+                  </div>
+                  <div class="status-item">
+                    <span class="status-label">Zerado</span>
+                    <span class="status-value">{{ g.added_by_status.beaten }}</span>
+                  </div>
+                  <div class="status-item">
+                    <span class="status-label">Quero jogar</span>
+                    <span class="status-value">{{ g.added_by_status.toplay }}</span>
+                  </div>
+                  <div class="status-item">
+                    <span class="status-label">Tenho</span>
+                    <span class="status-value">{{ g.added_by_status.owned }}</span>
+                  </div>
+                  <div class="status-item">
+                    <span class="status-label">Desistiram</span>
+                    <span class="status-value">{{ g.added_by_status.dropped }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" aria-labelledby="similar-title">
+      <div class="container">
+        <header class="section-header">
+          <h2 id="similar-title" class="section-title">Séries Relacionadas</h2>
+        </header>
+        @if (g.game_series && g.game_series.length > 0) {
+          <div class="series-list">
+            @for (series of g.game_series.slice(0, 5); track series.id) {
+              <a [routerLink]="['/jogo', series.id]" class="series-item card">
+                <span class="series-icon">🎮</span>
+                <span class="series-name">{{ series.name }}</span>
+                <span class="series-count">{{ series.games_count }} jogos</span>
+              </a>
+            }
+          </div>
+        } @else {
+          <p class="no-series">Nenhuma série relacionada encontrada.</p>
+        }
+      </div>
+    </section>
+  }
+</div>

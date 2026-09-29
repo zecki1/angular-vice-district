@@ -1,0 +1,103 @@
+:host {
+  display: block;
+  padding: 2.5rem 0 3.5rem;
+}
+
+.banner-novidades-rotulo {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  max-width: 80rem;
+  margin: 0 auto 1.75rem;
+  padding: 0 1.5rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--neon-pink);
+}
+
+.banner-novidades-ponto {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 9999px;
+  background: var(--neon-pink);
+  box-shadow: 0 0 12px var(--meia-agua);
+  animation: banner-pulso 1.6s ease-in-out infinite;
+}
+@keyframes banner-pulso {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.banner-novidades-carregando {
+  height: 9rem;
+  background: linear-gradient(90deg, transparent, var(--superficie), transparent);
+  background-size: 200% 100%;
+  animation: banner-varrer 1.4s linear infinite;
+}
+@keyframes banner-varrer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.banner-novidades-vazio {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  color: var(--texto-fraco);
+}
+
+.banner-novidades-faixa {
+  display: flex;
+  gap: 2.5rem;
+  width: max-content;
+  will-change: transform;
+}
+
+.banner-novidades-grupo {
+  display: flex;
+  gap: 2.5rem;
+}
+
+.banner-novidades-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  white-space: nowrap;
+}
+
+.banner-novidades-numero {
+  font-family: 'Archivo Black', sans-serif;
+  font-size: 2.2rem;
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--texto-suave);
+  opacity: 0.8;
+  user-select: none;
+}
+
+.banner-novidades-cartaz {
+  width: 4.2rem;
+  height: 6.2rem;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--borda);
+  box-shadow: 0 12px 30px rgb(0 0 0 / 0.4);
+}
+
+.banner-novidades-nome {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.banner-novidades-ano {
+  font-size: 0.82rem;
+  color: var(--texto-suave);
+  font-variant-numeric: tabular-nums;
+}

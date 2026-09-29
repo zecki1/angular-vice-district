@@ -15,11 +15,14 @@ module.exports = defineConfig([
     ],
     processor: angular.processInlineTemplates,
     rules: {
+      // Prefixo `ap` (AngularPrime/Atelier) e não `app`: as diretivas
+      // `apReveal`/`apParallax` são a convenção já usada no angular-atelier-north
+      // para não colidir com prefixo de componente.
       '@angular-eslint/directive-selector': [
         'error',
         {
           type: 'attribute',
-          prefix: 'app',
+          prefix: 'ap',
           style: 'camelCase',
         },
       ],

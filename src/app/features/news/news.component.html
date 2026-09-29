@@ -1,0 +1,79 @@
+<div class="news-page">
+  <header class="page-header section">
+    <div class="container">
+      <div class="page-header-content">
+        <div>
+          <h1 class="page-title">Notícias</h1>
+          <p class="page-subtitle">Tudo que acontece no mundo dos games</p>
+        </div>
+        <div class="search-wrapper">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input
+            type="search"
+            class="input search-input"
+            placeholder="Buscar notícias..."
+            [value]="searchQuery()"
+            (input)="onSearch($any($event.target).value)"
+            aria-label="Buscar notícias"
+          />
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div class="news-list" role="feed">
+        @for (article of articles(); track article.id) {
+          <article class="news-item card" role="article">
+            <div class="news-item-image">
+              <img [src]="article.image_url" [alt]="article.title" loading="lazy" />
+              <span class="news-source badge badge-cyan">{{ article.source }}</span>
+            </div>
+            <div class="news-item-content">
+              <div class="news-item-meta">
+                <time class="news-date">{{ formatDate(article.published_at) }}</time>
+                <span class="news-category badge badge-purple">{{ article.category }}</span>
+              </div>
+              <h2 class="news-item-title">
+                <a [href]="article.url" target="_blank" rel="noopener">{{ article.title }}</a>
+              </h2>
+              <p class="news-item-excerpt">{{ article.description }}</p>
+              <div class="news-item-tags">
+                @for (tag of article.tags.slice(0, 3); track tag) {
+                  <span class="tag badge badge-purple">{{ tag }}</span>
+                }
+              </div>
+              <a [href]="article.url" target="_blank" rel="noopener" class="news-item-link">Ler artigo completo →</a>
+            </div>
+          </article>
+        } @empty {
+          <div class="empty-state">
+            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+            <h3>Nenhuma notícia encontrada</h3>
+            <p>Tente ajustar sua busca ou volte mais tarde.</p>
+          </div>
+        }
+      </div>
+
+      @if (!loading() && articles().length > 0) {
+        <div class="load-more-wrapper">
+          <button class="btn btn-secondary" (click)="loadMore()" [disabled]="loading()">
+            @if (loading()) {
+              <svg class="spinner" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"/>
+              </svg>
+              Carregando...
+            } @else {
+              Carregar mais notícias
+            }
+          </button>
+        </div>
+      }
+    </div>
+  </section>
+</div>
