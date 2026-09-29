@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ParallaxDirective } from '../../core/parallax.directive';
+import { ParallaxDirective } from '../../shared/directives/parallax.directive';
 
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

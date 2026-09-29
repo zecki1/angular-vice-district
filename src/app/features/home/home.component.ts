@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, computed, inject } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { RawgService } from '../../core/services/rawg.service';
 import { NewsService } from '../../core/services/news.service';

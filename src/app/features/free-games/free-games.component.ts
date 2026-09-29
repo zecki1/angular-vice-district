@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, inject, computed } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { EpicGamesService } from '../../core/services/epicgames.service';
 import { FreeGame } from '../../core/models/game.models';
 

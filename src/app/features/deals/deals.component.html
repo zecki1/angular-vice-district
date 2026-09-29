@@ -14,8 +14,8 @@
     <div class="container">
       <div class="deals-toolbar">
         <div class="toolbar-group">
-          <label class="toolbar-label">Loja</label>
-          <select class="input select" [value]="selectedStore()" (change)="onStoreChange($any($event.target).value)">
+          <label class="toolbar-label" for="deals-loja">Loja</label>
+          <select id="deals-loja" class="input select" [value]="selectedStore()" (change)="onStoreChange($any($event.target).value)">
             <option value="">Todas as lojas</option>
             @for (store of stores(); track store.storeID) {
               <option [value]="store.storeID">{{ store.storeName }}</option>
@@ -24,8 +24,8 @@
         </div>
 
         <div class="toolbar-group">
-          <label class="toolbar-label">Ordenar</label>
-          <select class="input select" [value]="sortBy()" (change)="onSortChange($any($event.target).value)">
+          <label class="toolbar-label" for="deals-ordenar">Ordenar</label>
+          <select id="deals-ordenar" class="input select" [value]="sortBy()" (change)="onSortChange($any($event.target).value)">
             <option value="Deal Rating">Melhor avaliação</option>
             <option value="Price">Menor preço</option>
             <option value="Savings">Maior desconto</option>
