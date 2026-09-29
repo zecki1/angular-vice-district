@@ -100,6 +100,11 @@ jobs:
       - run: npm ci
       - run: npm run build
       - name: Gerar mapa do bundle (source-map-explorer)
+        # O source-map-explorer não lê os sourcemaps do esbuild do Angular 22
+        # ("generated column Infinity") e sai com código 1 sem gerar relatório.
+        # O step é um gerador de relatório, não uma asserção, então não derruba
+        # o pipeline — o gate é o job de qualidade.
+        continue-on-error: true
         run: npm run analyze --if-present
       - name: Salvar relatório de bundle
         uses: actions/upload-artifact@v4
