@@ -6,7 +6,7 @@ import { mockMatchMedia } from '../test-helpers/match-media';
 
 @Component({
   imports: [ParallaxDirective],
-  template: `<div id="alvo" [appParallax]="40">conteúdo</div>`,
+  template: `<div id="alvo" [apParallax]="40">conteúdo</div>`,
 })
 class HostComponent {}
 

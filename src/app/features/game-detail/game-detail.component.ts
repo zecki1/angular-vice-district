@@ -1,8 +1,8 @@
-import { Component, OnInit, signal, inject, computed } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { RawgService } from '../../core/services/rawg.service';
 import { RatingComponent } from '../../shared/components/rating/rating';
-import { RawgGameDetail } from '../../core/models/game.models';
+import { RawgGameDetail, ShortScreenshot } from '../../core/models/game.models';
 
 @Component({
   selector: 'app-game-detail',
@@ -18,7 +18,7 @@ export class GameDetailComponent implements OnInit {
   readonly game = signal<RawgGameDetail | null>(null);
   readonly loading = signal(true);
   readonly error = signal<string | null>(null);
-  readonly screenshots = signal<any[]>([]);
+  readonly screenshots = signal<ShortScreenshot[]>([]);
   readonly currentScreenshot = signal(0);
 
   ngOnInit(): void {

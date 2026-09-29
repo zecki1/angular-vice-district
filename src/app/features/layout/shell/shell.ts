@@ -1,7 +1,6 @@
-import { Component, signal, computed, inject, HostListener } from '@angular/core';
+import { Component, signal, inject, HostListener } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { toSignal } from '@angular/core/rxjs-interop';
 
 interface NavItem {
   label: string;
