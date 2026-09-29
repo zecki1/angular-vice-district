@@ -1,0 +1,132 @@
+<aside
+  class="hub-acessibilidade"
+  aria-label="Hub de acessibilidade"
+  [class.aberto]="aberto()"
+  [attr.aria-hidden]="!aberto()"
+>
+  <div class="hub-cabecalho">
+    <h2 id="hub-titulo">Acessibilidade</h2>
+    <button
+      type="button"
+      class="hub-fechar"
+      aria-label="Fechar hub de acessibilidade"
+      (click)="fechar()"
+    >
+      &times;
+    </button>
+  </div>
+
+  <div class="hub-conteudo">
+    <!-- Tema -->
+    <section class="hub-secao">
+      <h3>Tema</h3>
+      <div class="hub-linha">
+        <button
+          type="button"
+          class="hub-btn-segmento"
+          [class.ativo]="tema() === 'light'"
+          (click)="temaService.definir('light')"
+        >
+          Claro
+        </button>
+        <button
+          type="button"
+          class="hub-btn-segmento"
+          [class.ativo]="tema() === 'dark'"
+          (click)="temaService.definir('dark')"
+        >
+          Escuro
+        </button>
+      </div>
+    </section>
+
+    <!-- Texto -->
+    <section class="hub-secao">
+      <h3>Texto</h3>
+      <div class="hub-linha hub-fonte">
+        <span class="hub-fonte-rotulo">A</span>
+        <input
+          type="range"
+          class="hub-fonte-range"
+          min="12"
+          max="26"
+          step="1"
+          [value]="a11y.tamanhoFonte()"
+          (input)="a11y.definirFonte(+$any($event.target).value)"
+          aria-label="Tamanho da fonte"
+        />
+        <span class="hub-fonte-info">{{ a11y.tamanhoFonte() }}px</span>
+      </div>
+      <label class="hub-toggle">
+        <input
+          type="checkbox"
+          [checked]="a11y.dislexia()"
+          (change)="a11y.alternar('dislexia')"
+        />
+        <span>Fonte legível (dislexia)</span>
+      </label>
+    </section>
+
+    <!-- Visão -->
+    <section class="hub-secao">
+      <h3>Visão</h3>
+      @for (modo of modos; track modo.valor) {
+      <label class="hub-radio">
+        <input
+          type="radio"
+          name="modo-visao"
+          [value]="modo.valor"
+          [checked]="a11y.visao() === modo.valor"
+          (change)="a11y.definirVisao(modo.valor)"
+        />
+        <span>{{ modo.rotulo }}</span>
+      </label>
+    }
+      <label class="hub-toggle">
+        <input
+          type="checkbox"
+          [checked]="a11y.altoContraste()"
+          (change)="a11y.alternar('altoContraste')"
+        />
+        <span>Alto contraste</span>
+      </label>
+    </section>
+
+    <!-- Auxílio -->
+    <section class="hub-secao">
+      <h3>Auxílio</h3>
+      <label class="hub-toggle">
+        <input
+          type="checkbox"
+          [checked]="a11y.linhasGuia()"
+          (change)="a11y.alternar('linhasGuia')"
+        />
+        <span>Linhas-guia de leitura</span>
+      </label>
+      <label class="hub-toggle">
+        <input
+          type="checkbox"
+          [checked]="a11y.reduzMovimento()"
+          (change)="a11y.alternar('reduzMovimento')"
+        />
+        <span>Reduzir animações</span>
+      </label>
+    </section>
+
+    <button type="button" class="hub-restaurar" (click)="a11y.restaurarPreferencias()">
+      Redefinir preferências
+    </button>
+  </div>
+</aside>
+
+<button
+  type="button"
+  class="hub-botao"
+  aria-label="Abrir hub de acessibilidade"
+  [attr.aria-expanded]="aberto()"
+  [attr.aria-controls]="'hub-titulo'"
+  [hidden]="aberto()"
+  (click)="abrir()"
+>
+  <span class="hub-botao-icone" aria-hidden="true">&#9881;</span>
+</button>

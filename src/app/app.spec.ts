@@ -1,23 +1,29 @@
+import { provideRouter } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
+
 import { App } from './app';
+import { routes } from './app.routes';
 
 describe('App', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [App],
+      providers: [provideRouter(routes)],
     }).compileComponents();
   });
 
-  it('deve criar o componente raiz', () => {
+  it('cria o componente raiz', () => {
     const fixture = TestBed.createComponent(App);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+    expect(fixture.componentInstance).toBeTruthy();
   });
 
-  it('deve renderizar o título da campanha', async () => {
+  it('monta o shell e o router-outlet', async () => {
     const fixture = TestBed.createComponent(App);
     await fixture.whenStable();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('VICE DISTRICT');
+    const html = (fixture.nativeElement as HTMLElement).innerHTML;
+
+    expect(html).toContain('app-shell');
+    expect(html).toContain('router-outlet');
+    expect(html).not.toContain('<h1');
   });
 });

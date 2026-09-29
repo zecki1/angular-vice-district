@@ -1,0 +1,34 @@
+<section id="newsletter" class="newsletter">
+  <p class="newsletter-eyebrow">Lista de espera</p>
+  <h2 class="newsletter-titulo display">Entre na lista.<br />Antes da cidade acordar.</h2>
+  <p class="newsletter-descricao">
+    Receba as primeiras cenas, ativações e pré-venda. Sem spam — só neon.
+  </p>
+
+  @if (enviado()) {
+    <p class="newsletter-sucesso" role="status">Você está na lista. A cidade aguarda.</p>
+  } @else {
+    <form class="newsletter-form" (ngSubmit)="assinar()" #form="ngForm" [attr.aria-busy]="enviando()">
+      <label class="sr-only" for="newsletter-email">Seu e-mail</label>
+      <input
+        id="newsletter-email"
+        class="newsletter-input"
+        type="email"
+        name="email"
+        placeholder="seu@email.com"
+        [ngModel]="email()"
+        (ngModelChange)="email.set($event)"
+        [attr.aria-invalid]="erro() ? 'true' : null"
+        aria-describedby="newsletter-erro"
+        required
+      />
+      <button type="submit" class="newsletter-botao" [disabled]="enviando()">
+        {{ enviando() ? 'Assinando…' : 'Assinar' }}
+      </button>
+    </form>
+  }
+
+  @if (erro()) {
+    <p id="newsletter-erro" class="newsletter-erro" role="alert">{{ erro() }}</p>
+  }
+</section>

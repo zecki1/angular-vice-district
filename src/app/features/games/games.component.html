@@ -1,0 +1,104 @@
+<div class="games-page">
+  <header class="page-header section">
+    <div class="container">
+      <div class="page-header-content">
+        <div>
+          <h1 class="page-title">Catálogo de Jogos</h1>
+          <p class="page-subtitle">Explore milhares de jogos, filtre por gênero, plataforma e mais</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div class="filters-bar">
+        <div class="search-box">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input
+            type="search"
+            class="input"
+            placeholder="Buscar jogos..."
+            [value]="searchQuery()"
+            (input)="onSearch($any($event.target).value)"
+            aria-label="Buscar jogos"
+          />
+        </div>
+
+        <div class="filter-group">
+          <select class="input select" aria-label="Filtrar por gênero" [value]="selectedGenre()" (change)="selectedGenre.set($any($event.target).value); onFilterChange()">
+            <option value="">Todos os gêneros</option>
+            @for (genre of genres(); track genre.slug) {
+              <option [value]="genre.slug">{{ genre.name }}</option>
+            }
+          </select>
+
+          <select class="input select" aria-label="Filtrar por plataforma" [value]="selectedPlatform()" (change)="selectedPlatform.set($any($event.target).value); onFilterChange()">
+            <option value="">Todas as plataformas</option>
+            @for (platform of platforms(); track platform.slug) {
+              <option [value]="platform.slug">{{ platform.name }}</option>
+            }
+          </select>
+
+          <select class="input select" aria-label="Ordenar por" [value]="sortBy()" (change)="onSortChange($any($event.target).value)">
+            <option value="-rating">Melhor avaliados</option>
+            <option value="-released">Mais recentes</option>
+            <option value="-added">Mais adicionados</option>
+            <option value="name">Ordem alfabética</option>
+          </select>
+        </div>
+
+        @if (hasActiveFilters()) {
+          <button class="btn btn-ghost" (click)="clearFilters()">Limpar filtros</button>
+        }
+      </div>
+
+      <div class="results-header">
+        <p class="results-count">
+          {{ games().length }} jogo{{ games().length !== 1 ? 's' : '' }} encontrado{{ games().length !== 1 ? 's' : '' }}
+          @if (rawg.totalCount() > 0) {
+            de {{ rawg.totalCount() }}
+          }
+        </p>
+      </div>
+
+      <div class="games-grid grid-auto-fit" role="list">
+        @for (game of games(); track game.id) {
+          <app-game-card [game]="game" variant="default" role="listitem" />
+        } @empty {
+          @if (!loading()) {
+            <div class="empty-state" style="grid-column: 1 / -1;">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+                <line x1="8" y1="8" x2="16" y2="16" stroke="var(--color-neon-pink)"/>
+              </svg>
+              <h3>Nenhum jogo encontrado</h3>
+              <p>Tente ajustar seus filtros ou busque por outro termo.</p>
+            </div>
+          } @else {
+            @for (i of [1,2,3,4,5,6]; track i) {
+              <app-game-card [game]="skeletonGame()" variant="default" />
+            }
+          }
+        }
+      </div>
+
+      @if (!loading() && hasMore()) {
+        <div class="load-more-wrapper">
+          <button class="btn btn-secondary" (click)="loadMore()" [disabled]="loadingMore()">
+            @if (loadingMore()) {
+              <svg class="spinner" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10" stroke-opacity="0.25"/><path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"/>
+              </svg>
+              Carregando...
+            } @else {
+              Carregar mais jogos
+            }
+          </button>
+        </div>
+      }
+    </div>
+  </section>
+</div>

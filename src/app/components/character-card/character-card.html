@@ -1,0 +1,18 @@
+<article class="card" [style.--cor-personagem]="character().cor">
+  @if (character().capa; as capa) {
+    <div class="card-capa" aria-hidden="true">
+      <img class="card-capa-img" [src]="capa" [alt]="''" loading="lazy" />
+      <span class="card-grau-badge">{{ character().grau }}</span>
+    </div>
+  } @else {
+    <div class="card-silhueta" aria-hidden="true">
+      <span class="card-ciano"></span>
+      <span class="card-grau-badge">{{ character().grau }}</span>
+    </div>
+  }
+  <div class="card-corpo">
+    <h3 class="card-nome">{{ character().nome }}</h3>
+    <p class="card-papel">{{ character().papel }}</p>
+    <p class="card-descricao">{{ character().descricao }}</p>
+  </div>
+</article>
