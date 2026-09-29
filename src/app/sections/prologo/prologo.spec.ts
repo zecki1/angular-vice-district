@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Prologo } from './prologo';
-import { ParallaxDirective } from '../../core/parallax.directive';
+import { ParallaxDirective } from '../../shared/directives/parallax.directive';
 
 describe('Prologo', () => {
   beforeEach(async () => {

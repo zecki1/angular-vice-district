@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { map, catchError, of, tap } from 'rxjs';
+import { Observable, map, catchError, of, tap } from 'rxjs';
 import { Deal } from '../models/game.models';
 import { CacheService } from './cache.service';
 
@@ -57,7 +57,7 @@ export class CheapsharkService {
   private readonly http = inject(HttpClient);
   private readonly cache = inject(CacheService);
 
-  getDeals(options: CheapsharkOptions = {}): any {
+  getDeals(options: CheapsharkOptions = {}): Observable<CheapsharkDeal[]> {
     const cacheKey = `deals_${JSON.stringify(options)}`;
     const cached = this.cache.get<CheapsharkDeal[]>(cacheKey);
     if (cached) return of(cached);
@@ -76,7 +76,7 @@ export class CheapsharkService {
       );
   }
 
-  getGameDeals(gameID: string): any {
+  getGameDeals(gameID: string): Observable<CheapsharkDeal[]> {
     const cacheKey = `game_deals_${gameID}`;
     const cached = this.cache.get<CheapsharkDeal[]>(cacheKey);
     if (cached) return of(cached);
@@ -89,7 +89,7 @@ export class CheapsharkService {
       );
   }
 
-  getStores(): any {
+  getStores(): Observable<CheapsharkStore[]> {
     const cacheKey = 'stores';
     const cached = this.cache.get<CheapsharkStore[]>(cacheKey);
     if (cached) return of(cached);
@@ -101,7 +101,7 @@ export class CheapsharkService {
       );
   }
 
-  getGameLookup(title: string, exact = false): any {
+  getGameLookup(title: string, exact = false): Observable<CheapsharkDeal[]> {
     return this.http.get<CheapsharkDeal[]>(`${CHEAPSHARK_BASE_URL}/games`, {
       params: { title, exact: exact ? '1' : '0' }
     }).pipe(catchError(() => of([])));

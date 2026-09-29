@@ -1,6 +1,6 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { map, catchError, of, tap } from 'rxjs';
+import { catchError, of, tap } from 'rxjs';
 import { RawgGame, RawgGameDetail, RawgResponse, GameFilters } from '../models/game.models';
 import { CacheService } from './cache.service';
 
@@ -59,7 +59,7 @@ export class RawgService {
         tap(response => {
           this.cache.set(cacheKey, response, 5 * 60 * 1000);
         }),
-        catchError(err => {
+        catchError(() => {
           this._error.set('Falha ao carregar jogos. Tente novamente.');
           return of({ count: 0, results: [], next: null, previous: null });
         })

@@ -36,13 +36,24 @@ const env = lerDotEnv();
 const url = env.VITE_SUPABASE_URL ?? '';
 const anonKey = env.VITE_SUPABASE_ANON_KEY ?? '';
 const trailerVideoId = env.VITE_TRAILER_VIDEO_ID ?? '';
+const supabaseProjectSlug = env.VITE_SUPABASE_PROJECT_SLUG ?? '';
+const tmdbApiKey = env.VITE_TMDB_API_KEY ?? '';
+
+// A base da API e a das imagens não são segredo: ficam aqui para o app não
+// espalhar literais pela vitrine.
+const tmdbBaseUrl = 'https://api.themoviedb.org/3';
+const tmdbImagem = 'https://image.tmdb.org/t/p/';
 
 const conteudo = `// Gerado por scripts/gerar-ambiente.mjs — NÃO COMMITAR.
 // Sem .env o site sobe em modo demo (formulário resolve sem persistir).
 export const ambienteLocal = {
   supabaseUrl: ${JSON.stringify(url)},
   supabaseAnonKey: ${JSON.stringify(anonKey)},
+  supabaseProjectSlug: ${JSON.stringify(supabaseProjectSlug)},
   trailerVideoId: ${JSON.stringify(trailerVideoId)},
+  tmdbApiKey: ${JSON.stringify(tmdbApiKey)},
+  tmdbBaseUrl: ${JSON.stringify(tmdbBaseUrl)},
+  tmdbImagem: ${JSON.stringify(tmdbImagem)},
 };
 `;
 

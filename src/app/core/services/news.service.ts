@@ -9,6 +9,37 @@ const NEWSAPI_URL = 'https://newsapi.org/v2';
 const REDDIT_BASE = 'https://www.reddit.com';
 const GAMING_SUBREDDITS = ['gaming', 'games', 'pcgaming', 'PS5', 'XboxSeriesX', 'NintendoSwitch'];
 
+interface NewsApiArticle {
+  url: string;
+  title: string;
+  description: string | null;
+  urlToImage: string | null;
+  publishedAt: string;
+  source: { name: string } | null;
+}
+
+interface NewsApiResponse {
+  articles: NewsApiArticle[];
+}
+
+interface RedditPreviewImage {
+  source?: { url?: string };
+}
+
+interface RedditChildData {
+  id: string;
+  title: string;
+  selftext: string;
+  permalink: string;
+  preview?: { images?: RedditPreviewImage[] };
+  thumbnail?: string;
+  created_utc: number;
+}
+
+interface RedditListing {
+  data?: { children?: { data: RedditChildData }[] };
+}
+
 @Injectable({ providedIn: 'root' })
 export class NewsService {
   private readonly http = inject(HttpClient);
@@ -57,7 +88,7 @@ export class NewsService {
       return of([] as NewsArticle[]);
     }
 
-    return this.http.get<any>(`${NEWSAPI_URL}/top-headlines`, {
+    return this.http.get<NewsApiResponse>(`${NEWSAPI_URL}/top-headlines`, {
       params: {
         apiKey: NEWSAPI_KEY,
         category,
@@ -66,7 +97,7 @@ export class NewsService {
         pageSize: String(pageSize),
       }
     }).pipe(
-      map(res => (res.articles || []).map((a: any) => ({
+      map(res => (res.articles || []).map((a: NewsApiArticle): NewsArticle => ({
         id: `newsapi_${a.url}`,
         title: a.title,
         description: a.description || '',
@@ -84,8 +115,8 @@ export class NewsService {
 
   private fetchFromReddit() {
     const requests = GAMING_SUBREDDITS.map(sub => 
-      this.http.get<any>(`${REDDIT_BASE}/r/${sub}/hot.json?limit=10`).pipe(
-        map(res => (res.data?.children || []).map((child: any) => {
+      this.http.get<RedditListing>(`${REDDIT_BASE}/r/${sub}/hot.json?limit=10`).pipe(
+        map(res => (res.data?.children || []).map((child: { data: RedditChildData }): NewsArticle => {
           const data = child.data;
           return {
             id: `reddit_${data.id}`,
@@ -98,7 +129,7 @@ export class NewsService {
             published_at: new Date(data.created_utc * 1000).toISOString(),
             category: 'reddit',
             tags: [sub, 'reddit'],
-          } as NewsArticle;
+          };
         })),
         catchError(() => of([] as NewsArticle[]))
       )
@@ -119,7 +150,7 @@ export class NewsService {
     this._error.set(null);
 
     if (NEWSAPI_KEY && NEWSAPI_KEY !== 'your_newsapi_key') {
-      this.http.get<any>(`${NEWSAPI_URL}/everything`, {
+      this.http.get<NewsApiResponse>(`${NEWSAPI_URL}/everything`, {
         params: {
           apiKey: NEWSAPI_KEY,
           q: query,
@@ -128,7 +159,7 @@ export class NewsService {
           pageSize: '20',
         }
       }).pipe(
-        map(res => (res.articles || []).map((a: any) => ({
+        map(res => (res.articles || []).map((a: NewsApiArticle): NewsArticle => ({
           id: `newsapi_${a.url}`,
           title: a.title,
           description: a.description || '',
