@@ -35,9 +35,14 @@ export class Shell {
 
   constructor() {
     this.checkMobile();
+    // Subscribe to NavigationEnd events to update currentRoute
+    const navEnd = this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd)
+    );
+    // Initialize with the current URL
     this.currentRoute.set(this.router.url);
-
-    this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((e: NavigationEnd) => {
+    // Subscribe after initialization to update currentRoute on navigation
+    navEnd.subscribe((e: NavigationEnd) => {
       this.currentRoute.set(e.url);
       if (this.isMobile()) this.isSidebarOpen.set(false);
     });

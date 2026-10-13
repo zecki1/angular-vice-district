@@ -1,6 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, catchError, of, tap, forkJoin } from 'rxjs';
+import { map, catchError, of, tap } from 'rxjs';
 import { NewsArticle } from '../models/game.models';
 import { environment } from '../../../environments/environment';
 import { CacheService } from './cache.service';
