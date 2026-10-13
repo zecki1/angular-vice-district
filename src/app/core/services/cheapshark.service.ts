@@ -60,9 +60,9 @@ export class CheapsharkService {
   private readonly http = inject(HttpClient);
   private readonly cache = inject(CacheService);
 
-  getDeals(options: CheapsharkOptions = {}): Observable<CheapsharkDeal[]> {
+  getDeals(options: CheapsharkOptions = {}): Observable<Deal[]> {
     const cacheKey = `deals_${JSON.stringify(options)}`;
-    const cached = this.cache.get<CheapsharkDeal[]>(cacheKey);
+    const cached = this.cache.get<Deal[]>(cacheKey);
     if (cached) return of(cached);
 
     let params = new HttpParams().set('path', 'deals');
@@ -72,11 +72,30 @@ export class CheapsharkService {
       }
     });
 
-    return this.http.get<CheapsharkDeal[]>(CHEAPSHARK_URL, { params })
-      .pipe(
-        tap(deals => this.cache.set(cacheKey, deals, 10 * 60 * 1000)),
-        catchError(() => of([]))
-      );
+    return this.http.get<CheapsharkDeal[]>(CHEAPSHARK_URL, { params }).pipe(
+      map(deals => deals.map((d: CheapsharkDeal) => ({
+        id: d.id,
+        game_id: d.game_id,
+        game_name: d.game_name,
+        game_slug: d.game_slug,
+        store_id: d.store_id,
+        store_name: d.store_name,
+        store_slug: d.store_slug,
+        price_new: Number(d.price_new),     // Converte string para number
+        price_old: Number(d.price_old),     // Converte string para number
+        discount_percent: Number(d.discount_percent), // Converte string para number
+        currency: d.currency,
+        deal_url: d.deal_url,
+        expires_at: d.expires_at,
+        rating: d.rating,
+        metacritic: d.metacritic,
+        steam_rating_text: d.steam_rating_text,
+        steam_rating_percent: d.steam_rating_percent,
+        steam_rating_count: d.steam_rating_count,
+      }))),
+      tap(deals => this.cache.set(cacheKey, deals, 10 * 60 * 1000)),
+      catchError(() => of([]))
+    );
   }
 
   getGameDeals(gameID: string): Observable<CheapsharkDeal[]> {
