@@ -139,36 +139,36 @@ export async function mockearApis(page: Page): Promise<void> {
     }),
   );
 
-  await page.route('**/api/reddit**', (route) =>
+  await page.route('**/api/noticias**', (route) =>
     route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({
-        data: {
-          children: [
-            {
-              data: {
-                id: 'post1',
-                title: 'Post de teste sobre games',
-                selftext: 'Discussão usada pelos fluxos E2E do GameHub.',
-                permalink: '/r/gaming/comments/post1/',
-                thumbnail: 'https://placehold.co/140x140/1a1a2e/ffffff?text=Post',
-                created_utc: 1700000000,
-              },
-            },
-            {
-              data: {
-                id: 'post2',
-                title: 'Segundo post de teste',
-                selftext: '',
-                permalink: '/r/gaming/comments/post2/',
-                thumbnail: 'self',
-                created_utc: 1700003600,
-              },
-            },
-          ],
+      body: JSON.stringify([
+        {
+          id: 'pcgamer_post1',
+          title: 'Post de teste sobre games',
+          description: 'Discussão usada pelos fluxos E2E do GameHub.',
+          url: 'https://www.pcgamer.com/r/gaming/comments/post1/',
+          image_url: 'https://placehold.co/140x140/1a1a2e/ffffff?text=Post',
+          source: 'PC Gamer',
+          source_url: 'https://www.pcgamer.com',
+          published_at: '2023-11-14T22:13:20.000Z',
+          category: 'noticias',
+          tags: ['PC Gamer'],
         },
-      }),
+        {
+          id: 'pcgamer_post2',
+          title: 'Segundo post de teste',
+          description: '',
+          url: 'https://www.pcgamer.com/r/gaming/comments/post2/',
+          image_url: '',
+          source: 'PC Gamer',
+          source_url: 'https://www.pcgamer.com',
+          published_at: '2023-11-14T23:13:20.000Z',
+          category: 'noticias',
+          tags: ['PC Gamer'],
+        },
+      ]),
     }),
   );
 

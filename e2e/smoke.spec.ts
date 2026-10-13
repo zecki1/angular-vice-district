@@ -103,11 +103,24 @@ async function mockearAPIs(page: import('@playwright/test').Page) {
   await page.route('**/api/tmdb**', (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ results: [] }) }),
   );
-  await page.route('**/api/reddit**', (route) =>
+  await page.route('**/api/noticias**', (route) =>
     route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({ data: { children: [] } }),
+      body: JSON.stringify([
+        {
+          id: 'pcgamer_noticia-1',
+          title: 'Notícia de Teste',
+          description: 'Resumo da notícia de teste.',
+          url: 'https://www.pcgamer.com/noticia-1',
+          image_url: 'https://placehold.co/640x360/1a1a2e/ffffff?text=Noticia',
+          source: 'PC Gamer',
+          source_url: 'https://www.pcgamer.com',
+          published_at: '2024-01-01T00:00:00.000Z',
+          category: 'noticias',
+          tags: ['PC Gamer'],
+        },
+      ]),
     }),
   );
   // Imagens de placeholder externo não devem travar o teste.
