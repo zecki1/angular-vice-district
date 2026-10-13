@@ -7,7 +7,7 @@ async function mapearFreeToGame(path, query) {
   }
   const resp = await fetch(url, { headers: { 'User-Agent': 'GameHub/1.0' } });
   if (!resp.ok) throw new Error('FreeToGame HTTP '+resp.status);
-  const dados = await resp.json();
+  let dados=await resp.json(); if(dados.results) dados=dados.results; else if(!Array.isArray(dados)) dados=[];
   const results = dados.map(j => ({
     id: j.id,
     slug: j.title.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
