@@ -23,7 +23,8 @@ function limpar(t) {
 }
 
 function tag(nome, xml) {
-  const m = xml.match(new RegExp(`<${nome}[^>]*>([\s\S]*?)</${nome}>`, 'i'));
+  // `\\s` porque dentro de template literal a barra única vira a letra "s".
+  const m = xml.match(new RegExp(`<${nome}[^>]*>([\\s\\S]*?)</${nome}>`, 'i'));
   return m ? m[1] : '';
 }
 
@@ -41,24 +42,56 @@ function imagemDoItem(item) {
   return m ? m[1] : '';
 }
 
-function traduzirSimples(texto) {
-  if (!texto) return texto;
-  const map = [
-    ['News', 'Notícias'], ['Review', 'Análise'], ['Preview', 'Prévia'], ['Guide', 'Guia'],
-    ['Best', 'Melhores'], ['How to', 'Como'], ['Tips', 'Dicas'], ['Update', 'Atualização'],
-    ['Trailer', 'Trailer'], ['Release date', 'Data de lançamento'], ['Hands-on', 'Primeiras impressões'],
-    ['Interview', 'Entrevista'], ['Rumor', 'Rumor'], ['Leaks', 'Vazamentos'], ['Patch notes', 'Notas do patch'],
-    ['Free', 'Grátis'], ['Deals', 'Ofertas'], ['Sale', 'Promoção'], ['Early access', 'Acesso antecipado'],
-    ['Console', 'Console'], ['PC', 'PC'], ['Xbox', 'Xbox'], ['PlayStation', 'PlayStation'], ['Switch', 'Switch'],
-    ['PS5', 'PS5'], ['PS4', 'PS4'], ['Xbox Series', 'Xbox Series'], ['Nintendo Switch', 'Nintendo Switch'],
-    ['is', 'é'], ['are', 'são'], ['will be', 'será'], ['launches', 'lança'], ['delayed', 'adiado'], ['cancelled', 'cancelado'],
-    ['reveals', 'revela'], ['announced', 'anunciado'], ['confirmed', 'confirmado'], ['report', 'relata'], ['claims', 'afirma'],
-    ['game', 'jogo'], ['games', 'jogos'], ['update', 'atualização'], ['players', 'jogadores'], ['developer', 'desenvolvedor'],
-    ['publisher', 'publicadora'], ['release', 'lançamento'], ['remake', 'remake'], ['sequel', 'continuação'], ['spin-off', 'spin-off'],
-  ];
-  let out = texto;
-  for (const [en, pt] of map) out = out.replace(new RegExp(`\b${en}\b`, 'gi'), pt);
-  return out.charAt(0).toUpperCase() + out.slice(1);
+/* ---------------------------------------------------------------------------
+ * Tradução EN → PT-BR via MyMemory (gratuita, sem chave).
+ * - limite ~5k palavras/dia; por isso traduzimos só o lote final (~40 itens)
+ * - com cache em memória para não repetir o mesmo texto na mesma invocação
+ * - se a tradução falhar, mantém o original (a UI nunca fica vazia)
+ * ------------------------------------------------------------------------- */
+const MYMEMORY = 'https://api.mymemory.translated.net/get';
+const cacheTraducao = new Map();
+
+async function traduzirTexto(texto) {
+  const bruto = String(texto || '').trim();
+  if (!bruto || bruto.length < 3) return bruto;
+  const chave = bruto.slice(0, 400);
+  if (cacheTraducao.has(chave)) return cacheTraducao.get(chave);
+
+  try {
+    const url = `${MYMEMORY}?q=${encodeURIComponent(bruto.slice(0, 480))}&langpair=en|pt`;
+    const r = await fetch(url, { headers: { 'User-Agent': AGENTE }, signal: AbortSignal.timeout(8000) });
+    if (!r.ok) return bruto;
+    const dados = await r.json();
+    const traduzido = dados?.responseData?.translatedText;
+    if (r.status === 200 && traduzido && !/^MYMEMORY WARNING/i.test(traduzido)) {
+      cacheTraducao.set(chave, traduzido);
+      return traduzido;
+    }
+  } catch { /* segue com o original */ }
+  return bruto;
+}
+
+/** Limita a concorrência para não estourar o rate limit da MyMemory. */
+async function comLimite(lista, limite, fn) {
+  const saida = new Array(lista.length);
+  let cursor = 0;
+  const trabalhador = async () => {
+    while (cursor < lista.length) {
+      const i = cursor++;
+      saida[i] = await fn(lista[i], i);
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(limite, lista.length) }, trabalhador));
+  return saida;
+}
+
+async function traduzirArtigo(artigo) {
+  const [title, description] = await comLimite(
+    [artigo.title, (artigo.description || '').slice(0, 300)],
+    2,
+    traduzirTexto,
+  );
+  return { ...artigo, title, description };
 }
 
 async function buscarFeed(f) {
@@ -74,8 +107,8 @@ async function buscarFeed(f) {
     const publicada = data ? new Date(data) : new Date();
     return {
       id: f.fonte+'_'+(link||titulo),
-      title: traduzirSimples(titulo),
-      description: traduzirSimples(desc).slice(0,300),
+      title: titulo,
+      description: desc.slice(0,300),
       url: link,
       image_url: imagemDoItem(item),
       source: f.fonte,
@@ -93,7 +126,9 @@ module.exports = async function handler(req,res) {
   if (req.method==='OPTIONS') { res.status(204).end(); return; }
   try {
     const r = await Promise.allSettled(FEEDS.map(buscarFeed));
-    const arts = r.filter(x=>x.status==='fulfilled').flatMap(x=>x.value).sort((a,b)=>new Date(b.published_at)-new Date(a.published_at)).slice(0,40);
+    const brutas = r.filter(x=>x.status==='fulfilled').flatMap(x=>x.value).sort((a,b)=>new Date(b.published_at)-new Date(a.published_at)).slice(0,40);
+    // Traduz só o lote final, com concorrência baixa para não estourar cota.
+    const arts = await comLimite(brutas, 4, traduzirArtigo);
     res.setHeader('Cache-Control','public, s-maxage=600, stale-while-revalidate=1200');
     res.status(200).json(arts);
   } catch(e) { res.status(502).json({erro:'Falha feeds', detalhe:String(e)}); }

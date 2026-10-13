@@ -16,7 +16,8 @@ export class ReleasesComponent implements OnInit {
   readonly upcomingGames = signal<RawgGame[]>([]);
   readonly recentReleases = signal<RawgGame[]>([]);
   readonly loading = signal(true);
-  readonly currentTab = signal<'upcoming' | 'recent'>('upcoming');
+  // Aba padrão "recent": a fonte atual (FreeToGame) só traz jogos já lançados.
+  readonly currentTab = signal<'upcoming' | 'recent'>('recent');
 
   readonly groupedUpcoming = computed(() => {
     const groups = new Map<string, RawgGame[]>();
@@ -36,13 +37,20 @@ export class ReleasesComponent implements OnInit {
   }
 
   loadData(): void {
-    this.rawg.getUpcomingGames(20);
+    // Uma única chamada: a fonte atual (FreeToGame) não tem datas futuras,
+    // então ordenamos por lançamento e separamos "próximos" (vazio hoje) de
+    // "recentes". Evita corrida entre dois requests no mesmo signal.
     this.rawg.getGames({ ordering: '-released', page_size: 20 });
 
     setTimeout(() => {
       const games = this.rawg.games();
-      this.upcomingGames.set(games.filter(g => new Date(g.released) >= new Date()));
-      this.recentReleases.set(games.filter(g => new Date(g.released) < new Date()).slice(0, 12));
+      const hoje = new Date();
+      this.upcomingGames.set(games.filter(g => g.released && new Date(g.released) >= hoje));
+      this.recentReleases.set(games.filter(g => g.released && new Date(g.released) < hoje).slice(0, 12));
+      // Sem "próximos" na fonte, abre direto na aba que tem conteúdo.
+      if (!this.upcomingGames().length && this.recentReleases().length) {
+        this.currentTab.set('recent');
+      }
       this.loading.set(false);
     }, 500);
   }

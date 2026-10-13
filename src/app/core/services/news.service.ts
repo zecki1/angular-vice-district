@@ -47,21 +47,45 @@ export class NewsService {
     this._loading.set(true);
     this._error.set(null);
 
-    forkJoin({
-      newsapi: this.fetchFromNewsAPI(category, page, pageSize),
-      feeds: this.fetchFromFeeds(),
-    }).subscribe({
-      next: ({ newsapi, feeds }) => {
-        const combined = [...newsapi, ...feeds]
-          .sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
-          .slice(0, pageSize);
-        this._articles.set(combined);
-        this.cache.set(cacheKey, combined, 15 * 60 * 1000);
-        this._loading.set(false);
+    // 1° tentativa: feeds RSS (via /api/noticias) - já traz notícias com PT-BR
+    this.fetchFromFeeds().subscribe({
+      next: (feeds) => {
+        if (feeds && feeds.length) {
+          const combined = feeds
+            .sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
+            .slice(0, pageSize);
+          this._articles.set(combined);
+          this.cache.set(cacheKey, combined, 15 * 60 * 1000);
+          this._loading.set(false);
+          return;
+        }
+        // 2° tentativa: NewsAPI caso os feeds estejam vazios
+        this.fetchFromNewsAPI(category, page, pageSize).subscribe({
+          next: (newsapi) => {
+            const combined = newsapi.slice(0, pageSize);
+            this._articles.set(combined);
+            this.cache.set(cacheKey, combined, 15 * 60 * 1000);
+            this._loading.set(false);
+          },
+          error: () => {
+            this._error.set('Falha ao carregar notícias');
+            this._loading.set(false);
+          }
+        });
       },
       error: () => {
-        this._error.set('Falha ao carregar notícias');
-        this._loading.set(false);
+        // 2° tentativa também: se o fetchFromFeeds falhar, tenta NewsAPI
+        this.fetchFromNewsAPI(category, page, pageSize).subscribe({
+          next: (newsapi) => {
+            this._articles.set(newsapi.slice(0, pageSize));
+            this.cache.set(cacheKey, newsapi.slice(0, pageSize), 15 * 60 * 1000);
+            this._loading.set(false);
+          },
+          error: () => {
+            this._error.set('Falha ao carregar notícias');
+            this._loading.set(false);
+          }
+        });
       }
     });
   }
