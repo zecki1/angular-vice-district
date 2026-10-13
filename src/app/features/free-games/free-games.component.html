@@ -47,9 +47,9 @@
           <button class="btn btn-primary" (click)="loadFreeGames()">Tentar novamente</button>
         </div>
       } @else {
-        <div class="free-games-grid grid-auto-fit" role="list">
+        <div class="free-games-grid grid-auto-fit">
           @for (game of freeGames(); track game.id) {
-            <article class="free-game-card card card-glow-pink" role="listitem">
+            <article class="free-game-card card card-glow-pink">
               <div class="free-game-image">
                 <img [src]="game.image_url" [alt]="game.title" loading="lazy" />
                 <span class="free-badge badge badge-pink">GRÁTIS</span>

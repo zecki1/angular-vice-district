@@ -64,9 +64,9 @@
         </p>
       </div>
 
-      <div class="games-grid grid-auto-fit" role="list">
+      <div class="games-grid grid-auto-fit">
         @for (game of games(); track game.id) {
-          <app-game-card [game]="game" variant="default" role="listitem" />
+          <app-game-card [game]="game" variant="default" />
         } @empty {
           @if (!loading()) {
             <div class="empty-state" style="grid-column: 1 / -1;">

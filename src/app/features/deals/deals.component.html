@@ -38,9 +38,9 @@
         </div>
       </div>
 
-      <div class="deals-grid grid-auto-fit" role="list">
+      <div class="deals-grid grid-auto-fit">
         @for (deal of filteredDeals(); track deal.id) {
-          <article class="deal-card card card-glow-cyan" role="listitem">
+          <article class="deal-card card card-glow-cyan">
             <div class="deal-image">
               @if (deal.game_slug) {
                 <a [routerLink]="['/jogo', deal.game_id]">

@@ -46,9 +46,9 @@
           @for (game of groupedUpcoming(); track $index) {
             <div class="month-group">
               <h2 class="month-label">{{ game.month }}</h2>
-              <div class="grid-auto-fit" role="list">
+              <div class="grid-auto-fit">
                 @for (g of game.games; track g.id) {
-                  <app-game-card [game]="g" variant="default" role="listitem" />
+                  <app-game-card [game]="g" variant="default" />
                 }
               </div>
             </div>
@@ -59,9 +59,9 @@
           }
         </div>
       } @else {
-        <div class="grid-auto-fit" role="list">
+        <div class="grid-auto-fit">
           @for (game of recentReleases(); track game.id) {
-            <app-game-card [game]="game" variant="default" role="listitem" />
+            <app-game-card [game]="game" variant="default" />
           } @empty {
             <div class="empty-state">
               <h3>Nenhum lançamento recente</h3>

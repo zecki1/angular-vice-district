@@ -77,9 +77,9 @@
         </div>
         <a routerLink="/lancamentos" class="btn btn-ghost">Ver todos →</a>
       </header>
-      <div class="grid-auto-fit" role="list">
+      <div class="grid-auto-fit">
         @for (game of popularGames(); track game.id) {
-          <app-game-card [game]="game" variant="default" role="listitem" />
+          <app-game-card [game]="game" variant="default" />
         } @empty {
           @for (i of [1,2,3,4,5,6]; track i) {
             <app-game-card [game]="skeletonGame()" variant="default" />
@@ -98,9 +98,9 @@
         </div>
         <a routerLink="/noticias" class="btn btn-ghost">Ver todas →</a>
       </header>
-      <div class="news-grid" role="list">
+      <div class="news-grid">
         @for (article of latestNews(); track article.id) {
-          <article class="news-card card" role="listitem">
+          <article class="news-card card">
             <div class="news-image">
               <img [src]="article.image_url" [alt]="article.title" loading="lazy" />
               <span class="news-source badge badge-cyan">{{ article.source }}</span>
@@ -114,7 +114,7 @@
           </article>
         } @empty {
           @for (i of [1,2,3,4]; track i) {
-            <article class="news-card card skeleton" role="listitem">
+            <article class="news-card card skeleton">
               <div class="news-image skeleton" style="aspect-ratio: 16/9;"></div>
               <div class="news-content">
                 <div class="skeleton" style="width: 80px; height: 16px;"></div>
@@ -138,9 +138,9 @@
         </div>
         <a routerLink="/gratis" class="btn btn-ghost">Ver todos →</a>
       </header>
-      <div class="grid-auto-fit" role="list">
+      <div class="grid-auto-fit">
         @for (game of freeGames(); track game.id) {
-          <article class="free-game-card card card-glow-pink" role="listitem">
+          <article class="free-game-card card card-glow-pink">
             <div class="free-game-image">
               <img [src]="game.image_url" [alt]="game.title" loading="lazy" />
               <span class="free-badge badge badge-pink">GRÁTIS</span>
@@ -157,7 +157,7 @@
           </article>
         } @empty {
           @for (i of [1,2,3]; track i) {
-            <article role="listitem" class="free-game-card card skeleton">
+            <article class="free-game-card card skeleton">
               <div class="free-game-image skeleton" style="aspect-ratio: 16/9;"></div>
               <div class="free-game-content">
                 <div class="skeleton" style="width: 60%; height: 24px;"></div>
@@ -180,9 +180,9 @@
         </div>
         <a routerLink="/mini-games" class="btn btn-ghost">Jogar agora →</a>
       </header>
-      <div class="minigames-grid grid-auto-fit" role="list">
+      <div class="minigames-grid grid-auto-fit">
         @for (minigame of miniGames(); track minigame.id) {
-          <article class="minigame-card card card-glow-cyan" role="listitem" [routerLink]="['/mini-games', minigame.id]">
+          <article class="minigame-card card card-glow-cyan" [routerLink]="['/mini-games', minigame.id]">
             <div class="minigame-icon">{{ minigame.icon }}</div>
             <h3 class="minigame-title">{{ minigame.title }}</h3>
             <p class="minigame-desc">{{ minigame.description }}</p>

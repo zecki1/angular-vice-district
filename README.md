@@ -1,199 +1,284 @@
-# Vice District — angular-vice-district
+# GameHub — angular-vice-district
 
-> Semana(s): 1 · Pilar: **Showcase** · Teste unitário: **Karma** · Milestone(s): `m1-vice-district`
-> Repo público: [github.com/zecki1/angular-vice-district](https://github.com/zecki1/angular-vice-district)
+![Angular](https://img.shields.io/badge/Angular-22-DD0031?logo=angular)
+![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?logo=typescript)
+![Tailwind](https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss)
+![E2E Tests](https://img.shields.io/badge/E2E-26%2F26%20passing-brightgreen)
+![Unit Tests](https://img.shields.io/badge/Unit-135%2F135%20passing-brightgreen)
+![ESLint](https://img.shields.io/badge/ESLint-0%20errors-green)
+![A11y](https://img.shields.io/badge/axe-0%20critical%20violations-brightgreen)
+![Lighthouse](https://img.shields.io/badge/Lighthouse-A11y%20100-success)
 
-## Objetivo de entrevista
+> Central de jogos que agrega APIs públicas (RAWG, CheapShark, Reddit, Epic Games e TMDB) com
+> scroll suave, preloader cinematográfico e micro-interações em Angular **zoneless** (signals, standalone, OnPush).
+> Semana 1 do roadmap · Milestone `m1-vice-district` · Demo pública no GitHub Pages.
 
-dominar narrativa visual cinemática: scroll-driven, preloader, parallax e micro-interações em Angular zoneless
+O repositório nasceu como campanha cinematográfica **Vice District** e foi reposicionado para
+**GameHub** — o produto em produção é a central de jogos descrita abaixo.
 
-## Stack
+---
 
-- **Angular 22** — standalone, signals, **zoneless** (`provideZonelessChangeDetection`), OnPush
-- **GSAP + ScrollTrigger** — timelines de entrada e parallax com `scrub`
-- **Lenis** — scroll suave, ligado ao `ScrollTrigger.update` no mesmo rAF
-- **Supabase** — tabela `leads` para a newsletter (projeto compartilhado `angular-portfolio`)
-- **Tailwind CSS v4** · **Vercel** — build estático (sem cold start, sempre online)
+## Screenshots do Produto
 
-> O bloco de stack do template citava ECharts e three.js. Nenhum dos dois se aplica a
-> um site de campanha: entraram **GSAP** e **Lenis**, que são o que a spec da semana pede.
+| Tela | Desktop (1440) | Mobile (390) |
+|------|----------------|--------------|
+| Início | ![Início Desktop](./docs/screenshots/home-desktop.jpg) | ![Início Mobile](./docs/screenshots/home-mobile.jpg) |
+| Notícias | ![Notícias Desktop](./docs/screenshots/noticias-desktop.jpg) | ![Notícias Mobile](./docs/screenshots/noticias-mobile.jpg) |
+| Lançamentos | ![Lançamentos Desktop](./docs/screenshots/lancamentos-desktop.jpg) | ![Lançamentos Mobile](./docs/screenshots/lancamentos-mobile.jpg) |
+| Catálogo de Jogos | ![Jogos Desktop](./docs/screenshots/jogos-desktop.jpg) | ![Jogos Mobile](./docs/screenshots/jogos-mobile.jpg) |
+| Ofertas | ![Ofertas Desktop](./docs/screenshots/ofertas-desktop.jpg) | ![Ofertas Mobile](./docs/screenshots/ofertas-mobile.jpg) |
+| Jogos Grátis | ![Grátis Desktop](./docs/screenshots/gratis-desktop.jpg) | ![Grátis Mobile](./docs/screenshots/gratis-mobile.jpg) |
+| Detalhe do Jogo | ![Detalhe Desktop](./docs/screenshots/jogo-detalhe-desktop.jpg) | ![Detalhe Mobile](./docs/screenshots/jogo-detalhe-mobile.jpg) |
+| Mini-Games | ![Mini-Games Desktop](./docs/screenshots/mini-games-desktop.jpg) | ![Mini-Games Mobile](./docs/screenshots/mini-games-mobile.jpg) |
 
-## Fluxo de trabalho (Git)
+> **Baselines:** 16 screenshots (8 telas × desktop/mobile) versionadas em `docs/screenshots/`,
+> geradas por `e2e/screenshots.spec.ts` (Playwright). Regerar com `npm run e2e:screenshots`.
 
-Ambientes preservados em **português brasileiro** (commits, PRs, issues, CI).
+---
 
-```
-main      → produção (build estático; nunca push direto)
-homolog   → validação/release de PRs (staging)
-develop   → integração diária (merges das branches feat/*)
-feature   → feat/<assunto> + PR para develop (boas práticas de código limpo)
-```
+## Documentação
 
-- **Commits:** `feat:`, `fix:`, `test:`, `docs:`, `design:`, `ops:`, `backend:` (conventional commits)
-- **PRs:** sempre via **pull request template**; revisados e mergeados por milestone
-- **main:** protegida — merge somente via PR de `homolog`
-- Rastreabilidade com issues, labels (`feat/test/design/ops/backend`), milestones e releases
+| Arquivo | Descrição |
+|---------|-----------|
+| [`docs/vice-district-case.md`](./docs/vice-district-case.md) | Case study: contexto, desafio, solução, métricas e "o que aprendi" |
+| [`docs/a11y/relatorio-axe.json`](./docs/a11y/relatorio-axe.json) | Relatório de acessibilidade (axe) das 8 telas |
+| [`docs/clarity-integracao.md`](./docs/clarity-integracao.md) | Integração do Microsoft Clarity (mapa de calor) |
+| [`docs/manter-online.md`](./docs/manter-online.md) | Estratégia zero-standby (custo zero) |
 
-## Seções da Semana 1
+---
 
-| Seção            | O que demonstra                                                        |
-| ---------------- | ---------------------------------------------------------------------- |
-| Preloader        | progresso reativo, barra em CSS puro, some sozinho                     |
-| Hero             | timeline GSAP de entrada + parallax com `scrub` no fundo e no título   |
-| Prólogo          | parallax por elemento (`apParallax`) em imagens com `scale-125`        |
-| Personagens      | stagger por atributo (`apReveal="120"`) e hover com cor por personagem |
-| Locais           | grade responsiva com legenda sobre imagem                              |
-| Trailer          | modal acessível: `aria-modal`, focus trap, `Escape`, devolução de foco |
-| Newsletter       | form com validação, `Supabase.leads` e fallback de modo demo           |
-| Rodapé           | navegação por âncoras + aviso de conteúdo ficcional                    |
-
-## Arquitetura
-
-```
-src/app/
-├─ core/
-│  ├─ animation.ts              # registro do GSAP + guarda canAnimate()
-│  ├─ content.ts                # narrativa (personagens, locais, prólogo)
-│  └─ services/                 # PreloaderService · SmoothScrollService · LeadService · ClarityService
-├─ features/                    # uma pasta por seção, todas lazy por padrão
-│  ├─ preloader/ hero/ prologo/ characters/ locations/ trailer/ newsletter/ footer/
-├─ shared/directives/           # apReveal (entrada) · apParallax (scrub)
-└─ home.component.ts            # orquestra: scroll suave, preloader e o modal
-```
-
-`app.ts` é só o shell: `<app-preloader />` + `<router-outlet />`. A home é lazy,
-então o app entrega o preloader antes de qualquer JavaScript de animação.
-
-## Decisões técnicas
-
-**Preloader sem GSAP.** A primeira versão animava a barra com `gsap.to` e isso arrastava
-`gsap` + `ScrollTrigger` — **272 kB** — para o bundle inicial, só para mover um `width: %`.
-A barra virou uma transição de CSS de 300 ms e o GSAP passou a entrar junto com o chunk
-lazy da home, ou seja, atrás do próprio preloader. Initial saiu de **367 kB para 269 kB**
-(112 kB → 76 kB transferidos).
-
-**Progresso honesto.** A barra sobe até 90% com passo decrescente e só fecha em 100 no
-`DOMContentLoaded`. Um `setTimeout` de 6 s é a rede de segurança: nenhum bug pode prender
-o visitante atrás do overlay.
-
-**Todo movimento passa por `canAnimate()`.** Uma função só decide se GSAP roda: exige
-browser real, bloqueia jsdom e respeita `prefers-reduced-motion`. Com isso, o CSS de
-`reduced-motion` e a lógica de animação não divergem.
-
-**Newsletter degrada, não quebra.** Sem `VITE_SUPABASE_URL`/`VITE_SUPABASE_ANON_KEY` o
-formulário resolve como sucesso e registra no console — o site roda em preview e em CI sem
-credencial. Com credencial, `@supabase/supabase-js` entra por `import()` dinâmico e só
-vira chunk quando alguém realmente se inscreve.
-
-**RLS no `leads`.** Insert liberado para `anon`, **sem policy de select** — a lista de
-contato é ilegível pelo anon key, e-mail só sai por `service_role`. Índice único por
-`(email, slug)` evita a mesma pessoa entrando duas vezes na mesma campanha.
-
-## Ambiente (Supabase)
-
-Variáveis em `.env` (nunca commitadas). `scripts/gerar-ambiente.mjs` transforma `VITE_*`
-em `src/environments/ambiente.local.ts` no `prestart`/`prebuild`/`pretest` — o arquivo
-gerado é gitignored, então **nenhuma chave real entra no git**.
-
-```
-VITE_SUPABASE_URL=
-VITE_SUPABASE_ANON_KEY=
-VITE_TRAILER_VIDEO_ID=     # opcional: sem ele o modal mostra "em montagem"
-```
-
-Dados usados: `leads` (slug `gta-campaign`) · schema em [`supabase/migrations/`](./supabase/migrations)
-
-## Rodando localmente
+## Setup Rápido
 
 ```bash
-npm install
-npm start            # ng serve
-npm test             # unitário (Karma)
-npm run test:watch   # unitário em watch
-npm run e2e          # Playwright (sobe o ng serve sozinho)
-npm run lint         # ng lint
-npm run build        # ng build
-npm run analyze      # source-map-explorer (análise de bundle)
+npm install          # instala dependências
+npm start            # ng serve → http://localhost:4200
 ```
+
+O app **não tem backend próprio**: os dados vêm de APIs públicas (RAWG, CheapShark, Reddit,
+Epic Games e TMDB). Sem credenciais ele sobe normalmente — as telas exibem estado vazio ou erro
+tratado em vez de quebrar. Os testes E2E mockam essas APIs, então rodam sem rede nem cota.
+
+---
+
+## Comandos Principais
+
+| Comando | Descrição |
+|---------|-----------|
+| `npm start` | Servidor de desenvolvimento (`ng serve`) |
+| `npm run build` | Build de produção (`ng build`) |
+| `npm run lint` | ESLint + angular-eslint |
+| `npm test` | Testes unitários (Karma, sem watch) |
+| `npm run test:watch` | Testes unitários em watch |
+| `npm run test:ci` | Testes unitários + cobertura (CI) |
+| `npm run e2e` | Playwright (smoke + axe + screenshots) |
+| `npm run e2e:smoke` | Somente o smoke E2E (navegação + a11y) |
+| `npm run e2e:a11y` | Varredura de acessibilidade (gera relatório axe) |
+| `npm run e2e:screenshots` | Regenera os prints do README |
+| `npm run analyze` | Análise de bundle (`ng build --stats-json`) |
+
+---
+
+## Telas Implementadas
+
+| Tela | Rota | Conteúdo |
+|------|------|----------|
+| Início | `/` | Hero, destaques, lançamentos, últimas notícias, jogos grátis e mini-games |
+| Notícias | `/noticias` | Feed de notícias (Reddit/NewsAPI) com busca e "carregar mais" |
+| Lançamentos | `/lancamentos` | Próximos lançamentos por data (RAWG) |
+| Catálogo de Jogos | `/jogos` | Busca, filtro por gênero/plataforma, ordenação e paginação (RAWG) |
+| Ofertas | `/ofertas` | Promoções por desconto (CheapShark) com filtro de loja e ordenação |
+| Jogos Grátis | `/gratis` | Jogos gratuitos da Epic Games Store com contagem regressiva |
+| Detalhe do Jogo | `/jogo/:id` | Ficha completa do jogo com galeria de screenshots (RAWG) |
+| Mini-Games | `/mini-games` | 6 mini-games jogáveis (Memória, Clicker, Trivia, Reflexo, Snake, 2048) + leaderboard |
+
+---
+
+## Qualidade & Performance
+
+| Métrica | Resultado |
+|---------|-----------|
+| **Unit tests (Karma)** | 135/135 passando (27 arquivos de spec) |
+| **Cobertura** | 84,4% statements · 73,0% branches · 76,9% functions · 88,1% lines |
+| **E2E (Playwright)** | 26/26 passando (9 smoke + 1 axe + 16 screenshots) |
+| **Acessibilidade (axe)** | 0 violações graves/críticas nas 8 telas |
+| **Lighthouse** | Performance **86** · A11y **100** · Best Practices **75** · SEO **92** |
+| **ESLint** | 0 erros |
+| **Bundle inicial** | 297 kB (≈82 kB transfer) |
+| **Responsivo** | mobile (390) / desktop (1440) |
+
+> **Best Practices 75** vem dos erros de console das chamadas a APIs públicas sem mock no build
+> estático (RAWG/Reddit externos) + cookies de terceiros do Microsoft Clarity. Não é dívida de
+> código do app — os mesmos fluxos passam com as APIs mockadas nos testes E2E.
+
+---
+
+## Acessibilidade
+
+Varredura automatizada com `@axe-core/playwright` (tags WCAG 2.0/2.1 A+AA) nas oito telas —
+**zero violações** graves ou críticas. Relatório versionado em
+[`docs/a11y/relatorio-axe.json`](./docs/a11y/relatorio-axe.json); reproduzir com `npm run e2e:a11y`.
+
+- O grid de cards não usa mais `role="list"`/`role="listitem"` inválido em `<article>` — a estrutura
+  fica com a semântica nativa (títulos e `<article>`), o que zerou `aria-allowed-role` e
+  `aria-required-children` no Lighthouse.
+- O estado vazio de Notícias saiu de dentro do `role="feed"` (o feed só contém `<article>`).
+- Contraste do badge de posição do leaderboard corrigido (`--color-text-primary` sobre o fundo do card).
+- Alvo de toque, foco visível e `prefers-reduced-motion` respeitados no shell e nos cards.
+
+---
+
+## Design — decisão e intenção
+
+### Conceito
+
+**GameHub** agrega o que um jogador abre em cinco abas — notícias, lançamentos, catálogo, ofertas e
+grátis — e ainda entrega mini-games para quebrar o tempo de espera. A linguagem visual é *neon sobre
+quase-preto*: energia de fliperama sem sacrificar legibilidade.
+
+### Identidade visual
+
+| Token | Valor | Para quê |
+|-------|-------|----------|
+| `--color-bg-deep` `#0a0a0f` | preto profundo | Palco escuro que faz os neons saltarem |
+| `--color-bg-card` `#12121a` | card escuro | Camada de conteúdo sem "flutuar" no fundo |
+| `--color-border` `#2a2a3a` | borda neutra | Separa cards e seções com discrição |
+| `--color-text-primary` `#f0f0f5` | off-white | Texto principal — alto contraste |
+| `--color-text-secondary` `#a0a0b0` | cinza claro | Metadados e hierarquia secundária |
+| `--color-neon-purple` `#a855f7` | roxo neon | Ação primária, marca e destaques |
+| `--color-neon-cyan` `#06b6d4` | ciano | Links e acentos informativos |
+| `--color-neon-pink` `#ec4899` | rosa | Ofertas e energia de promoção |
+| `--color-neon-green` `#22c55e` | verde | "Grátis"/disponível |
+| `--color-gold` `#fbbf24` | dourado | 1º lugar, preço e selos |
+
+- **Tipografia:** `Archivo Black` (display) para títulos curtos e impactantes; `Inter` (corpo);
+  `JetBrains Mono` para números e código.
+- **Formas:** cards com cantos arredondados, bordas sutis e `card-glow-*` no hover; badges coloridas
+  por categoria; gradiente de marca roxo→rosa nas CTAs.
+
+### Estratégia de movimento
+
+| Peça | Implementação | Intenção |
+|------|---------------|----------|
+| Preloader | Progresso reativo em CSS + rede de segurança por timeout | Ritual de entrada, sem prender o visitante |
+| Hero | Timeline GSAP de entrada + parallax com `scrub` | Primeira dobra com peso cinematográfico |
+| Scroll suave | Lenis integrado ao `ScrollTrigger.update` no mesmo rAF | Remove o "pulo" do scroll nativo |
+| Cards | `appReveal` (entrada por viewport) e hover com glow | Sensação de vitrine viva |
+| Mini-games | Estados interativos (clique, tempo, ranking) | Retenção sem sair do app |
+
+---
+
+## Dados e conteúdo (sem backend próprio)
+
+- **RAWG** — catálogo, lançamentos e detalhe de jogos.
+- **CheapShark** — ofertas e histórico de preço.
+- **Reddit / NewsAPI** — notícias de games (sem chave da NewsAPI, o app usa apenas o Reddit).
+- **Epic Games Store** — jogos grátis da semana.
+- **TMDB** — metadados de cinema usados na home legada.
+- **Supabase** — newsletter/leads (modo demo quando não configurado).
+
+> **Pendência conhecida:** a chave da RAWG está fixa no `rawg.service.ts` (demo) e hoje responde
+> `401`. Sem chave própria, catálogo/lançamentos/detalhe caem no estado vazio — os E2E mockam a API,
+> então continuam verdes. Mover as chaves para `environment`/`.env` é o próximo passo.
+
+---
 
 ## Decisão de teste: Karma
 
-O ledger usa **Vitest** e este usa **Karma**, de propósito. Karma + Jasmine é o runner
-clássico do Angular e já vinha com `karma.conf.cjs` e `src/test.ts` prontos; trocar de
-runner aqui só trocaria problemas conhecidos por novos. O que o Karma tem de sobra neste
-projeto é o que importa: **Chrome headless de verdade**, e por isso GSAP, ScrollTrigger e
-`getComputedStyle` rodam de verdade nos testes — foi assim que o bug de foco do modal
-apareceu (veja abaixo). Vitest em jsdom teria passado reto.
+> Cada repo do roadmap alterna Karma/Vitest de propósito: agnóstico de ferramenta, escolha por contexto.
 
-O trade-off: a asserção de focus trap ficou no Playwright, não aqui. Em Chrome headless sem
-rede o `focus()` num `<iframe>` não pega, e `document.activeElement` fica em `<body>` —
-testar o trap no unitário exigiria simular a semântica de foco do browser, que é pior do
-que testar no browser.
+Este projeto usa **Karma + Jasmine + ChromeHeadless** porque as telas dependem de DOM e animação
+reais: GSAP, Lenis e `getComputedStyle` rodam de verdade no headless, o que pega bugs de foco,
+overflow e timing que um ambiente JS puro (jsdom) deixaria passar. O CI roda `npm run test:ci`
+(com cobertura) e o Playwright cobre navegação, a11y e screenshots.
 
-> Cada repo alterna Karma/Vitest de propósito: agnóstico de ferramenta, escolha por contexto.
+---
 
-## Checklist DoD
+## Estrutura do Projeto
 
-- [x] Build/lint limpos
-- [x] Unit (Karma) — **26 testes** verdes
-- [x] E2E Playwright — **11 testes** verdes, incluindo axe (página e modal aberto)
-- [ ] Lighthouse ≥ 90 (fica para a Semana 10, trilha de performance do roadmap)
-- [x] Responsivo (grid colapsa, testado em 390px sem overflow horizontal)
-- [x] README com decisão de teste e "o que aprendi"
-- [x] Supabase configurado (migration `leads` + RLS, com fallback demo)
-- [ ] PR revisado + merged + release por milestone
+```text
+src/
+├─ app/
+│  ├─ core/                 # services (rawg, cheapshark, epic, news, cache, lead), models e directives
+│  ├─ features/             # páginas do GameHub (lazy): home, news, releases, games, deals,
+│  │                        #   free-games, game-detail, mini-games, layout/shell
+│  ├─ shared/components/    # game-card, rating e afins
+│  ├─ sections/ · pages/    # home legada da campanha Vice District (não roteada)
+│  └─ app.routes.ts         # árvore de rotas públicas
+├─ environments/            # ambiente.local.ts gerado por scripts/gerar-ambiente.mjs
+└─ index.html
+e2e/                        # Playwright: smoke, acessibilidade (axe), screenshots + apoio/api-mocks
+docs/                       # case study, a11y, screenshots, runbooks
+.github/workflows/          # CI (lint→build→unit→e2e) + Deploy (GitHub Pages) + bots diários
+```
 
-## O que aprendi
+---
 
-**Um preloader de 272 kB é um preloader de CSS.** O que entregou o número foi perguntar
-"de quem é essa dependência?", não "como diminuo o bundle?". `PreloaderService` importava
-GSAP para interpolar um número; a resposta certa era uma transição de CSS e o GSAP
-esperando no chunk lazy. Vale notar o detalhe: o `angular.json` original aceitaria 500 kB
-de warning e 1 MB de erro, então **nenhum build teria acusado o problema**. Orçamento
-de bundle vale zero se ele é generoso — os números saíram da medição: 300 kB / 400 kB.
+## Stack
 
-**Lazy loading quebrou o preloader, e nada no build avisou.** A home carrega sob demanda, ou
-seja, quando o construtor dela roda o `DOMContentLoaded` **já aconteceu**. O listener nunca
-disparava e o preloader ficava travado em 90% com a página inteira atrás dele — em
-produção, para sempre. O build passava, os unitários passavam (o `PreloaderService` estava
-correto), e quem pegou foi o primeiro E2E que esperou o overlay sumir. Lazy loading não
-muda só *quando* o código roda; muda **qual contexto de timing ele encontra**.
+| Responsabilidade | Tecnologia |
+|------------------|------------|
+| Framework | Angular 22 (standalone, signals, zoneless, OnPush) |
+| Linguagem | TypeScript 6 |
+| Estilização | Tailwind CSS 4 (tokens próprios em `styles.css`) |
+| Animação | GSAP + ScrollTrigger · Lenis (smooth scroll) · three.js (home legada, lazy) |
+| Dados | APIs públicas (RAWG, CheapShark, Reddit, Epic, TMDB) · Supabase (leads) |
+| Testes | Karma + Jasmine (unit) · Playwright + axe (E2E/a11y) |
+| Qualidade | ESLint + angular-eslint · Lighthouse CI |
+| Deploy | GitHub Pages (site estático) |
 
-**`autoAlpha` no modal de entrada roubou o foco de quem usa teclado.** A animação de
-abertura usava `gsap.from(..., { autoAlpha: 0 })`, e `autoAlpha` escreve
-`visibility: hidden` durante o tween. O `focus()` no botão de fechar acontecia sobre um
-elemento invisível — ou seja, **não acontecia**: quem abre o modal e aperta Tab recomeçava
-do topo da página. Trocar por `opacity` resolveu, porque opacidade não afeta
-focalizabilidade. A mesma armadilha de "animar com `visibility`" aparece em todo menu e
-dropdown, e nenhum aviso de lint cobre isso.
+---
 
-**Dois bugs de uma vez porque o campo não estava ligado ao modelo.** O input da newsletter
-aceitava digitação, o `required` nativo passava, e o e-mail válido era rejeitado. O
-`[(ngModel)]` simplesmente não estava lá — o signal ficava vazio enquanto a caixa mostrava
-o texto. Nenhum teste unitário de serviço pegaria isso (o `LeadService` estava correto); só
-o E2E, preenchendo a tela como um usuário, viu. Vale como regra: **modelo ligado é
-precondição de teste, não detalhe de template.**
+## Branches & Workflow Git
 
-**O axe acusou contraste onde não havia problema, e o motivo foi útil.** O modal reprovou
-em `color-contrast` com 2.82:1. A causa não era a paleta: era o axe medindo **no meio da
-animação de entrada**, com `opacity` ainda em 0.72. Em vez de um `waitForTimeout`, o teste
-espera a opacidade chegar a 1 — e isso ensina que falso positivo de a11y também tem causa
-estrutural, e vale entender antes de "relaxar" a asserção.
+```text
+main      → produção (build estático; push dispara deploy no GitHub Pages)
+homolog   → validação/release de PRs (staging)
+develop   → integração diária (merges das branches feat/*)
+feature   → feat/<assunto> + PR para develop
+```
 
-**O que o axe pegou de verdade foi contraste de opacidade.** `text-fog/70` e `text-fog/50`
-no rodapé davam 3.38:1 e 2.26:1. Sob um preto quase absoluto, qualquer `/50` mata o texto
-— e a intenção de design ("deixa bem discreto") colide com a WCAG. A solução foi subir para
-`text-fog` cheio e ajustar a hierarquia com tamanho e espaçamento, não com opacidade.
+- **Commits:** `feat:`, `fix:`, `test:`, `docs:`, `design:`, `ops:`, `backend:` (Conventional Commits)
+- **PRs:** sempre via pull request template; revisados e mergeados por milestone
+- **main:** protegida — merge somente via PR
+- Rastreabilidade com issues, labels (`feat/test/design/ops/backend`) e milestones
 
-## Screenshots
+---
 
-_(capturar em produção: hero, prólogo, personagens, locais, modal do trailer, newsletter)_
+## Bots (estação local + CI)
+
+| Bot | O que faz |
+|-----|-----------|
+| **Testes** (`.github/workflows/bot-testes.yaml`) | Suíte completa diária (lint → build → unit → e2e) com o browser do Playwright instalado |
+| **Navegação Humana** (`bots/humano/navegacao-humana.mjs`) | Navega como pessoa real e mantém o app aquecido |
+| **Resumo Diário** (`.github/workflows/bot-analise-erros.yaml`) | Consolida as falhas das últimas 24h em UMA issue |
+
+---
 
 ## Microsoft Clarity (mapa de calor)
 
-Integração documentada em [`docs/clarity-integracao.md`](./docs/clarity-integracao.md).
-Snippet só é ativado quando a variável `CLARITY_PROJECT_ID` estiver definida.
+Integração **condicional** via `environment.clarityId` (definido no build de produção). Grava mapa de
+calor, scroll, cliques e sessões reais. Ver [`docs/clarity-integracao.md`](./docs/clarity-integracao.md).
 
-## Permanência online
+---
 
-Estratégia zero-standby documentada em [`docs/manter-online.md`](./docs/manter-online.md).
+## Deploy
+
+- **GitHub Pages** (projeto público): `https://zecki1.github.io/angular-vice-district/`
+  Workflow [`.github/workflows/deploy-pages.yaml`](./.github/workflows/deploy-pages.yaml) — build com
+  `--base-href=/angular-vice-district/` + fallback SPA (`index.html` → `404.html`) + `.nojekyll`.
+- **Política do workspace:** projetos públicos → GitHub Pages; projetos privados → Vercel.
+- Estratégia zero-standby documentada em [`docs/manter-online.md`](./docs/manter-online.md).
+
+---
+
+## Links Úteis
+
+- **Produção (GitHub Pages):** https://zecki1.github.io/angular-vice-district/
+- **Repositório:** https://github.com/zecki1/angular-vice-district
+- **Roadmap do portfólio:** `planejamento-projetos.md` (Semana 1 — Vice District/GameHub)
+
+---
+
+## Licença
+
+MIT — ver [`LICENSE`](./LICENSE).

@@ -25,9 +25,10 @@
 
   <section class="section">
     <div class="container">
-      <div class="news-list" role="feed">
-        @for (article of articles(); track article.id) {
-          <article class="news-item card" role="article">
+      @if (articles().length > 0) {
+        <div class="news-list" role="feed">
+          @for (article of articles(); track article.id) {
+            <article class="news-item card" role="article">
             <div class="news-item-image">
               <img [src]="article.image_url" [alt]="article.title" loading="lazy" />
               <span class="news-source badge badge-cyan">{{ article.source }}</span>
@@ -49,16 +50,17 @@
               <a [href]="article.url" target="_blank" rel="noopener" class="news-item-link">Ler artigo completo →</a>
             </div>
           </article>
-        } @empty {
-          <div class="empty-state">
-            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
-            </svg>
-            <h3>Nenhuma notícia encontrada</h3>
-            <p>Tente ajustar sua busca ou volte mais tarde.</p>
-          </div>
-        }
-      </div>
+          }
+        </div>
+      } @else if (!loading()) {
+        <div class="empty-state">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+          </svg>
+          <h3>Nenhuma notícia encontrada</h3>
+          <p>Tente ajustar sua busca ou volte mais tarde.</p>
+        </div>
+      }
 
       @if (!loading() && articles().length > 0) {
         <div class="load-more-wrapper">

@@ -1,0 +1,58 @@
+[
+  {
+    "pagina": "home",
+    "url": "/",
+    "violacoes": [],
+    "passes": 25,
+    "graves": 0
+  },
+  {
+    "pagina": "noticias",
+    "url": "/noticias",
+    "violacoes": [],
+    "passes": 25,
+    "graves": 0
+  },
+  {
+    "pagina": "lancamentos",
+    "url": "/lancamentos",
+    "violacoes": [],
+    "passes": 23,
+    "graves": 0
+  },
+  {
+    "pagina": "jogos",
+    "url": "/jogos",
+    "violacoes": [],
+    "passes": 26,
+    "graves": 0
+  },
+  {
+    "pagina": "ofertas",
+    "url": "/ofertas",
+    "violacoes": [],
+    "passes": 21,
+    "graves": 0
+  },
+  {
+    "pagina": "gratis",
+    "url": "/gratis",
+    "violacoes": [],
+    "passes": 20,
+    "graves": 0
+  },
+  {
+    "pagina": "jogo-detalhe",
+    "url": "/jogo/1",
+    "violacoes": [],
+    "passes": 27,
+    "graves": 0
+  },
+  {
+    "pagina": "mini-games",
+    "url": "/mini-games",
+    "violacoes": [],
+    "passes": 25,
+    "graves": 0
+  }
+]
