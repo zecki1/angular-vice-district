@@ -78,10 +78,9 @@ interface RespostaCartaz {
 
 @Injectable({ providedIn: 'root' })
 export class TmdbService {
-  private readonly chave = environment.tmdbApiKey;
-
   private montarUrl(caminho: string, extras = ''): string {
-    const base = `${environment.tmdbBaseUrl}${caminho}?api_key=${this.chave}&language=pt-BR`;
+    // Proxy serverless: a chave do TMDB vive no ambiente do Vercel (TMDB_API_KEY).
+    const base = `${environment.apiProxyUrl}/api/tmdb?path=${caminho}&language=pt-BR`;
     return extras ? `${base}${extras}` : base;
   }
 

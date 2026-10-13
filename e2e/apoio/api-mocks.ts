@@ -86,38 +86,39 @@ const dealFake = {
 
 /** Intercepta todas as APIs externas usadas pelas telas públicas. */
 export async function mockearApis(page: Page): Promise<void> {
-  // RAWG: a rota registrada por último tem precedência, então o catch-all vem
-  // antes e as coleções específicas depois. `/games/:id` devolve o jogo solto.
-  await page.route('https://api.rawg.io/**', (route) =>
-    route.fulfill({
+  // Todas as chamadas passam pelo proxy do BFF (`/api/*`); o sub-recurso vem no
+  // parâmetro `path`, então a resposta é escolhida por ele.
+  await page.route('**/api/rawg**', (route) => {
+    const recurso = new URL(route.request().url()).searchParams.get('path') ?? '';
+    if (recurso.startsWith('games/')) {
+      return route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(detailFake) });
+    }
+    if (recurso === 'genres') {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ count: 1, results: [{ id: 1, name: 'Action', slug: 'action' }] }),
+      });
+    }
+    if (recurso === 'platforms') {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ count: 1, results: [{ id: 1, name: 'PC', slug: 'pc' }] }),
+      });
+    }
+    return route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({ count: jogosFake.length, results: jogosFake, next: null, previous: null }),
-    }),
-  );
-  await page.route('https://api.rawg.io/api/games/**', (route) =>
-    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(detailFake) }),
-  );
-  await page.route('https://api.rawg.io/api/genres**', (route) =>
-    route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({ count: 1, results: [{ id: 1, name: 'Action', slug: 'action' }] }),
-    }),
-  );
-  await page.route('https://api.rawg.io/api/platforms**', (route) =>
-    route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({ count: 1, results: [{ id: 1, name: 'PC', slug: 'pc' }] }),
-    }),
-  );
+    });
+  });
 
-  await page.route('https://www.cheapshark.com/**', (route) =>
+  await page.route('**/api/cheapshark**', (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify([dealFake]) }),
   );
 
-  await page.route('https://newsapi.org/**', (route) =>
+  await page.route('**/api/newsapi**', (route) =>
     route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -138,40 +139,40 @@ export async function mockearApis(page: Page): Promise<void> {
     }),
   );
 
-  await page.route('https://www.reddit.com/**', (route) =>
+  await page.route('**/api/noticias**', (route) =>
     route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify({
-        data: {
-          children: [
-            {
-              data: {
-                id: 'post1',
-                title: 'Post de teste sobre games',
-                selftext: 'Discussão usada pelos fluxos E2E do GameHub.',
-                permalink: '/r/gaming/comments/post1/',
-                thumbnail: 'https://placehold.co/140x140/1a1a2e/ffffff?text=Post',
-                created_utc: 1700000000,
-              },
-            },
-            {
-              data: {
-                id: 'post2',
-                title: 'Segundo post de teste',
-                selftext: '',
-                permalink: '/r/gaming/comments/post2/',
-                thumbnail: 'self',
-                created_utc: 1700003600,
-              },
-            },
-          ],
+      body: JSON.stringify([
+        {
+          id: 'pcgamer_post1',
+          title: 'Post de teste sobre games',
+          description: 'Discussão usada pelos fluxos E2E do GameHub.',
+          url: 'https://www.pcgamer.com/r/gaming/comments/post1/',
+          image_url: 'https://placehold.co/140x140/1a1a2e/ffffff?text=Post',
+          source: 'PC Gamer',
+          source_url: 'https://www.pcgamer.com',
+          published_at: '2023-11-14T22:13:20.000Z',
+          category: 'noticias',
+          tags: ['PC Gamer'],
         },
-      }),
+        {
+          id: 'pcgamer_post2',
+          title: 'Segundo post de teste',
+          description: '',
+          url: 'https://www.pcgamer.com/r/gaming/comments/post2/',
+          image_url: '',
+          source: 'PC Gamer',
+          source_url: 'https://www.pcgamer.com',
+          published_at: '2023-11-14T23:13:20.000Z',
+          category: 'noticias',
+          tags: ['PC Gamer'],
+        },
+      ]),
     }),
   );
 
-  await page.route('https://store-site-backend-static.ak.epicgames.com/**', (route) =>
+  await page.route('**/api/epic**', (route) =>
     route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -185,7 +186,7 @@ export async function mockearApis(page: Page): Promise<void> {
     }),
   );
 
-  await page.route('https://api.themoviedb.org/**', (route) =>
+  await page.route('**/api/tmdb**', (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ results: [] }) }),
   );
 

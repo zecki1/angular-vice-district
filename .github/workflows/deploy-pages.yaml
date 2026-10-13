@@ -35,6 +35,10 @@ jobs:
         run: npm ci
 
       - name: Build (base-href do project site)
+        # O Pages é estático e não roda as funções de `/api/*`: o app aponta para
+        # o proxy serverless publicado no Vercel (mesmo repositório).
+        env:
+          VITE_API_PROXY_URL: https://vice-district.vercel.app
         run: npm run build -- --base-href=/angular-vice-district/
 
       - name: Fallback SPA (404.html)

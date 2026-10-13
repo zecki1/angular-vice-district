@@ -6,6 +6,11 @@ const angular = require('angular-eslint');
 
 module.exports = defineConfig([
   {
+    // Funções serverless do BFF (`/api/*`): rodam no Node do Vercel, usam
+    // `process.env` e a API nativa de `req`/`res` — fora das regras do app.
+    ignores: ['api/**', 'dist/**', 'coverage/**', 'playwright-report/**'],
+  },
+  {
     files: ['**/*.ts'],
     extends: [
       eslint.configs.recommended,
