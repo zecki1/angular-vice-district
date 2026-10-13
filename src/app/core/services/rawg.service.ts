@@ -2,10 +2,13 @@ import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { catchError, of, tap } from 'rxjs';
 import { RawgGame, RawgGameDetail, RawgResponse, GameFilters } from '../models/game.models';
+import { environment } from '../../../environments/environment';
 import { CacheService } from './cache.service';
 
-const RAWG_BASE_URL = 'https://api.rawg.io/api';
-const RAWG_KEY = 'b6f5c9d4e8f84e1a8c7b9d2f1a3e4b5c';
+// Endpoint do proxy serverless (Vercel). A chave da RAWG fica no ambiente do
+// servidor (RAWG_API_KEY) — o cliente nunca a vê e a chamada deixa de esbarrar
+// em CORS.
+const RAWG_URL = `${environment.apiProxyUrl}/api/rawg`;
 
 @Injectable({ providedIn: 'root' })
 export class RawgService {
@@ -29,8 +32,8 @@ export class RawgService {
   readonly hasGames = computed(() => this._games().length > 0);
   readonly totalPages = computed(() => Math.ceil(this._totalCount() / (this._currentFilters().page_size || 20)));
 
-  private buildParams(filters: GameFilters): HttpParams {
-    let params = new HttpParams().set('key', RAWG_KEY);
+  private buildParams(caminho: string, filters: GameFilters): HttpParams {
+    let params = new HttpParams().set('path', caminho);
     Object.entries(filters).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== '') {
         params = params.set(key, String(value));
@@ -54,7 +57,7 @@ export class RawgService {
     this._loading.set(true);
     this._error.set(null);
 
-    this.http.get<RawgResponse<RawgGame>>(`${RAWG_BASE_URL}/games`, { params: this.buildParams(filters) })
+    this.http.get<RawgResponse<RawgGame>>(RAWG_URL, { params: this.buildParams('games', filters) })
       .pipe(
         tap(response => {
           this.cache.set(cacheKey, response, 5 * 60 * 1000);
@@ -83,7 +86,7 @@ export class RawgService {
     const cached = this.cache.get<RawgGameDetail>(cacheKey);
     if (cached) return cached;
 
-    this.http.get<RawgGameDetail>(`${RAWG_BASE_URL}/games/${id}`, { params: new HttpParams().set('key', RAWG_KEY) })
+    this.http.get<RawgGameDetail>(`${RAWG_URL}`, { params: new HttpParams().set('path', `games/${id}`) })
       .pipe(
         tap(game => this.cache.set(cacheKey, game, 30 * 60 * 1000)),
         catchError(() => of(null))
@@ -100,7 +103,7 @@ export class RawgService {
     const cached = this.cache.get<RawgGameDetail>(cacheKey);
     if (cached) return of(cached);
 
-    return this.http.get<RawgGameDetail>(`${RAWG_BASE_URL}/games/${id}`, { params: new HttpParams().set('key', RAWG_KEY) })
+    return this.http.get<RawgGameDetail>(`${RAWG_URL}`, { params: new HttpParams().set('path', `games/${id}`) })
       .pipe(
         tap(game => this.cache.set(cacheKey, game, 30 * 60 * 1000)),
         catchError(() => of(null))
@@ -134,8 +137,8 @@ export class RawgService {
     const cached = this.cache.get<RawgResponse<{ id: number; name: string; slug: string }>>(cacheKey);
     if (cached) return of(cached);
 
-    return this.http.get<RawgResponse<{ id: number; name: string; slug: string }>>(`${RAWG_BASE_URL}/genres`, {
-      params: new HttpParams().set('key', RAWG_KEY)
+    return this.http.get<RawgResponse<{ id: number; name: string; slug: string }>>(RAWG_URL, {
+      params: new HttpParams().set('path', 'genres')
     }).pipe(
       tap(res => this.cache.set(cacheKey, res, 60 * 60 * 1000)),
       catchError(() => of({ count: 0, results: [], next: null, previous: null }))
@@ -147,8 +150,8 @@ export class RawgService {
     const cached = this.cache.get<RawgResponse<{ id: number; name: string; slug: string }>>(cacheKey);
     if (cached) return of(cached);
 
-    return this.http.get<RawgResponse<{ id: number; name: string; slug: string }>>(`${RAWG_BASE_URL}/platforms`, {
-      params: new HttpParams().set('key', RAWG_KEY)
+    return this.http.get<RawgResponse<{ id: number; name: string; slug: string }>>(RAWG_URL, {
+      params: new HttpParams().set('path', 'platforms')
     }).pipe(
       tap(res => this.cache.set(cacheKey, res, 60 * 60 * 1000)),
       catchError(() => of({ count: 0, results: [], next: null, previous: null }))
@@ -160,8 +163,8 @@ export class RawgService {
     const cached = this.cache.get<RawgResponse<{ id: number; name: string; slug: string }>>(cacheKey);
     if (cached) return of(cached);
 
-    return this.http.get<RawgResponse<{ id: number; name: string; slug: string }>>(`${RAWG_BASE_URL}/stores`, {
-      params: new HttpParams().set('key', RAWG_KEY)
+    return this.http.get<RawgResponse<{ id: number; name: string; slug: string }>>(RAWG_URL, {
+      params: new HttpParams().set('path', 'stores')
     }).pipe(
       tap(res => this.cache.set(cacheKey, res, 60 * 60 * 1000)),
       catchError(() => of({ count: 0, results: [], next: null, previous: null }))

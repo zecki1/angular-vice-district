@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 /**
- * Gera `src/environments/ambiente.local.ts` a partir de `.env`.
+ * Gera `src/environments/ambiente.local.ts` a partir de `.env` e do ambiente.
  *
  * O arquivo gerado é gitignored, mas o script roda em `prestart`/`prebuild`/
  * `pretest`/`postinstall`: a CI sempre tem o arquivo, mesmo sem `.env`, e
  * nenhuma chave real entra no git (mesma estratégia do angular-ledger-bank).
+ *
+ * O `process.env` entra como fallback/override para a CI poder injetar valores
+ * públicos de build (ex.: `VITE_API_PROXY_URL` no deploy do GitHub Pages).
  */
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -32,14 +35,15 @@ function lerDotEnv() {
   return valores;
 }
 
-const env = lerDotEnv();
+const env = { ...lerDotEnv(), ...process.env };
 const url = env.VITE_SUPABASE_URL ?? '';
 const anonKey = env.VITE_SUPABASE_ANON_KEY ?? '';
 const trailerVideoId = env.VITE_TRAILER_VIDEO_ID ?? '';
 const projectSlug = env.VITE_SUPABASE_PROJECT_SLUG ?? '';
-const tmdbApiKey = env.VITE_TMDB_API_KEY ?? '';
-const tmdbBaseUrl = env.VITE_TMDB_BASE_URL ?? 'https://api.themoviedb.org/3';
 const tmdbImagem = env.VITE_TMDB_IMAGEM ?? 'https://image.tmdb.org/t/p/';
+// Base do proxy serverless (funções em `/api/*`). Vazio = mesma origem (Vercel).
+// Em GitHub Pages deve apontar para o deploy do Vercel (ex.: https://vice-district.vercel.app).
+const apiProxyUrl = (env.VITE_API_PROXY_URL ?? '').replace(/\/+$/, '');
 
 const conteudo = `// Gerado por scripts/gerar-ambiente.mjs — NÃO COMMITAR.
 // Sem .env o site sobe em modo demo (formulário resolve sem persistir).
@@ -48,9 +52,8 @@ export const ambienteLocal = {
   supabaseAnonKey: ${JSON.stringify(anonKey)},
   supabaseProjectSlug: ${JSON.stringify(projectSlug)},
   trailerVideoId: ${JSON.stringify(trailerVideoId)},
-  tmdbApiKey: ${JSON.stringify(tmdbApiKey)},
-  tmdbBaseUrl: ${JSON.stringify(tmdbBaseUrl)},
   tmdbImagem: ${JSON.stringify(tmdbImagem)},
+  apiProxyUrl: ${JSON.stringify(apiProxyUrl)},
 };
 `;
 

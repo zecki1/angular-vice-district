@@ -2,9 +2,12 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { map, catchError, of, tap, type Observable } from 'rxjs';
 import { Deal } from '../models/game.models';
+import { environment } from '../../../environments/environment';
 import { CacheService } from './cache.service';
 
-const CHEAPSHARK_BASE_URL = 'https://www.cheapshark.com/api/1.0';
+// Proxy serverless: o CheapShark exige um `User-Agent` descritivo, que o
+// browser proíbe enviar, e não devolve CORS.
+const CHEAPSHARK_URL = `${environment.apiProxyUrl}/api/cheapshark`;
 
 interface CheapsharkDeal {
   id: string;
@@ -62,14 +65,14 @@ export class CheapsharkService {
     const cached = this.cache.get<CheapsharkDeal[]>(cacheKey);
     if (cached) return of(cached);
 
-    const params = new HttpParams();
+    let params = new HttpParams().set('path', 'deals');
     Object.entries(options).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
-        params.set(key, String(value));
+        params = params.set(key, String(value));
       }
     });
 
-    return this.http.get<CheapsharkDeal[]>(`${CHEAPSHARK_BASE_URL}/deals`, { params })
+    return this.http.get<CheapsharkDeal[]>(CHEAPSHARK_URL, { params })
       .pipe(
         tap(deals => this.cache.set(cacheKey, deals, 10 * 60 * 1000)),
         catchError(() => of([]))
@@ -81,7 +84,7 @@ export class CheapsharkService {
     const cached = this.cache.get<CheapsharkDeal[]>(cacheKey);
     if (cached) return of(cached);
 
-    return this.http.get<CheapsharkGameDeals[]>(`${CHEAPSHARK_BASE_URL}/games`, { params: { id: gameID } })
+    return this.http.get<CheapsharkGameDeals[]>(CHEAPSHARK_URL, { params: { path: 'games', id: gameID } })
       .pipe(
         map(res => res[0]?.deals || []),
         tap(deals => this.cache.set(cacheKey, deals as Deal[], 10 * 60 * 1000)),
@@ -94,7 +97,7 @@ export class CheapsharkService {
     const cached = this.cache.get<CheapsharkStore[]>(cacheKey);
     if (cached) return of(cached);
 
-    return this.http.get<CheapsharkStore[]>(`${CHEAPSHARK_BASE_URL}/stores`)
+    return this.http.get<CheapsharkStore[]>(CHEAPSHARK_URL, { params: { path: 'stores' } })
       .pipe(
         tap(stores => this.cache.set(cacheKey, stores, 60 * 60 * 1000)),
         catchError(() => of([]))
@@ -102,8 +105,8 @@ export class CheapsharkService {
   }
 
   getGameLookup(title: string, exact = false): Observable<CheapsharkDeal[]> {
-    return this.http.get<CheapsharkDeal[]>(`${CHEAPSHARK_BASE_URL}/games`, {
-      params: { title, exact: exact ? '1' : '0' }
+    return this.http.get<CheapsharkDeal[]>(CHEAPSHARK_URL, {
+      params: { path: 'games', title, exact: exact ? '1' : '0' }
     }).pipe(catchError(() => of([])));
   }
 }

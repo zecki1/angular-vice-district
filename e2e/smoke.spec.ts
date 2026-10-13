@@ -26,57 +26,52 @@ const jogoFake = {
 const jogosFake = [jogoFake, { ...jogoFake, id: 2, name: 'Segundo Jogo' }];
 
 async function mockearAPIs(page: import('@playwright/test').Page) {
-  // A RAWG tem um endpoint por coleção. Sem separar, `/genres` e `/platforms`
-  // devolveriam a lista de jogos e os `<option>` do filtro capturariam o texto
-  // esperado pelo teste antes do card.
-  //
-  // No Playwright a rota registrada por último tem precedência, então o catch-all
-  // vai primeiro e as coleções específicas depois.
-  //
-  // `/games/:id` devolve o jogo solto, não a lista paginada de `/games`.
-  await page.route('https://api.rawg.io/**', (route) =>
-    route.fulfill({
+  // Todas as chamadas passam pelo proxy do BFF (`/api/*`); o sub-recurso vem no
+  // parâmetro `path`, então a resposta é escolhida por ele.
+  await page.route('**/api/rawg**', (route) => {
+    const recurso = new URL(route.request().url()).searchParams.get('path') ?? '';
+    if (recurso.startsWith('games/')) {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          ...jogoFake,
+          slug: 'jogo-de-teste',
+          description: 'Um jogo de teste usado pelos fluxos E2E.',
+          description_raw: 'Um jogo de teste usado pelos fluxos E2E.',
+          website: '',
+          developers: [],
+          publishers: [],
+          screenshots: [],
+          movies: [],
+          achievements: [],
+          parent_game: null,
+          background_color: '#101018',
+          released: '2020-01-01',
+        }),
+      });
+    }
+    if (recurso === 'genres') {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ count: 1, results: [{ id: 1, name: 'Action', slug: 'action' }] }),
+      });
+    }
+    if (recurso === 'platforms') {
+      return route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ count: 1, results: [{ id: 1, name: 'PC', slug: 'pc' }] }),
+      });
+    }
+    return route.fulfill({
       status: 200,
       contentType: 'application/json',
       body: JSON.stringify({ count: jogosFake.length, results: jogosFake, next: null, previous: null }),
-    }),
-  );
-  await page.route('https://api.rawg.io/api/games/**', (route) =>
-    route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        ...jogoFake,
-        slug: 'jogo-de-teste',
-        description: 'Um jogo de teste usado pelos fluxos E2E.',
-        description_raw: 'Um jogo de teste usado pelos fluxos E2E.',
-        website: '',
-        developers: [],
-        publishers: [],
-        screenshots: [],
-        movies: [],
-        achievements: [],
-        parent_game: null,
-        background_color: '#101018',
-        released: '2020-01-01',
-      }),
-    }),
-  );
-  await page.route('https://api.rawg.io/api/genres**', (route) =>
-    route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({ count: 1, results: [{ id: 1, name: 'Action', slug: 'action' }] }),
-    }),
-  );
-  await page.route('https://api.rawg.io/api/platforms**', (route) =>
-    route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({ count: 1, results: [{ id: 1, name: 'PC', slug: 'pc' }] }),
-    }),
-  );
-  await page.route('https://www.cheapshark.com/**', (route) =>
+    });
+  });
+  await page.route('**/api/cheapshark**', (route) =>
     route.fulfill({
       status: 200,
       contentType: 'application/json',
@@ -105,10 +100,10 @@ async function mockearAPIs(page: import('@playwright/test').Page) {
       ]),
     }),
   );
-  await page.route('https://api.themoviedb.org/**', (route) =>
+  await page.route('**/api/tmdb**', (route) =>
     route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ results: [] }) }),
   );
-  await page.route('https://www.reddit.com/**', (route) =>
+  await page.route('**/api/reddit**', (route) =>
     route.fulfill({
       status: 200,
       contentType: 'application/json',

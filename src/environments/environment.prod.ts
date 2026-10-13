@@ -7,7 +7,6 @@ export const environment = {
   supabaseUrl: ambienteLocal.supabaseUrl,
   supabaseAnonKey: ambienteLocal.supabaseAnonKey,
   supabaseProjectSlug: ambienteLocal.supabaseProjectSlug,
-  tmdbApiKey: ambienteLocal.tmdbApiKey,
-  tmdbBaseUrl: ambienteLocal.tmdbBaseUrl,
   tmdbImagem: ambienteLocal.tmdbImagem,
+  apiProxyUrl: ambienteLocal.apiProxyUrl,
 };

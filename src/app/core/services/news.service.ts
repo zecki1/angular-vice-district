@@ -2,11 +2,13 @@ import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, catchError, of, tap, forkJoin } from 'rxjs';
 import { NewsArticle } from '../models/game.models';
+import { environment } from '../../../environments/environment';
 import { CacheService } from './cache.service';
 
-const NEWSAPI_KEY = 'your_newsapi_key';
-const NEWSAPI_URL = 'https://newsapi.org/v2';
-const REDDIT_BASE = 'https://www.reddit.com';
+// Proxies serverless: a NewsAPI exige chave (guardada no servidor) e o Reddit
+// nega clientes sem `User-Agent` próprio — nenhum dos dois envia CORS.
+const NEWSAPI_URL = `${environment.apiProxyUrl}/api/newsapi`;
+const REDDIT_BASE = `${environment.apiProxyUrl}/api/reddit`;
 const GAMING_SUBREDDITS = ['gaming', 'games', 'pcgaming', 'PS5', 'XboxSeriesX', 'NintendoSwitch'];
 
 interface NewsApiArticle {
@@ -82,13 +84,9 @@ export class NewsService {
   }
 
   private fetchFromNewsAPI(category: string, page: number, pageSize: number) {
-    if (!NEWSAPI_KEY || NEWSAPI_KEY === 'your_newsapi_key') {
-      return of([] as NewsArticle[]);
-    }
-
-    return this.http.get<NewsApiResponse>(`${NEWSAPI_URL}/top-headlines`, {
+    return this.http.get<NewsApiResponse>(NEWSAPI_URL, {
       params: {
-        apiKey: NEWSAPI_KEY,
+        path: 'top-headlines',
         category,
         language: 'pt',
         page: String(page),
@@ -113,7 +111,7 @@ export class NewsService {
 
   private fetchFromReddit() {
     const requests = GAMING_SUBREDDITS.map(sub => 
-      this.http.get<RedditListingResponse>(`${REDDIT_BASE}/r/${sub}/hot.json?limit=10`).pipe(
+      this.http.get<RedditListingResponse>(REDDIT_BASE, { params: { path: `r/${sub}/hot.json`, limit: '10' } }).pipe(
         map(res => (res.data?.children || []).map((child: RedditChild) => {
           const data = child.data;
           return {
@@ -147,56 +145,59 @@ export class NewsService {
     this._loading.set(true);
     this._error.set(null);
 
-    if (NEWSAPI_KEY && NEWSAPI_KEY !== 'your_newsapi_key') {
-      this.http.get<NewsApiResponse>(`${NEWSAPI_URL}/everything`, {
-        params: {
-          apiKey: NEWSAPI_KEY,
-          q: query,
-          language: 'pt',
-          sortBy: 'publishedAt',
-          pageSize: '20',
-        }
-      }).pipe(
-        map(res => (res.articles || []).map((a: NewsApiArticle) => ({
-          id: `newsapi_${a.url}`,
-          title: a.title,
-          description: a.description || '',
-          url: a.url,
-          image_url: a.urlToImage || '',
-          source: a.source?.name || 'NewsAPI',
-          source_url: a.url,
-          published_at: a.publishedAt,
-          category: 'search',
-          tags: [query],
-        }))),
-        tap(articles => this.cache.set(cacheKey, articles, 10 * 60 * 1000)),
-        catchError(() => of([] as NewsArticle[]))
-      ).subscribe({
-        next: articles => {
-          this._articles.set(articles);
-          this._loading.set(false);
-        },
-        error: () => {
-          this._error.set('Falha na busca');
-          this._loading.set(false);
-        }
-      });
-    } else {
-      this.fetchFromReddit().subscribe({
-        next: articles => {
-          const filtered = articles.filter(a => 
-            a.title.toLowerCase().includes(query.toLowerCase()) ||
-            a.description.toLowerCase().includes(query.toLowerCase())
-          );
-          this._articles.set(filtered);
-          this._loading.set(false);
-        },
-        error: () => {
-          this._error.set('Falha na busca');
-          this._loading.set(false);
-        }
-      });
-    }
+    this.http.get<NewsApiResponse>(NEWSAPI_URL, {
+      params: {
+        path: 'everything',
+        q: query,
+        language: 'pt',
+        sortBy: 'publishedAt',
+        pageSize: '20',
+      }
+    }).pipe(
+      map(res => (res.articles || []).map((a: NewsApiArticle) => ({
+        id: `newsapi_${a.url}`,
+        title: a.title,
+        description: a.description || '',
+        url: a.url,
+        image_url: a.urlToImage || '',
+        source: a.source?.name || 'NewsAPI',
+        source_url: a.url,
+        published_at: a.publishedAt,
+        category: 'search',
+        tags: [query],
+      }))),
+      tap(articles => {
+        if (articles.length) this.cache.set(cacheKey, articles, 10 * 60 * 1000);
+      }),
+      catchError(() => of([] as NewsArticle[]))
+    ).subscribe(articles => {
+      // Sem chave da NewsAPI (ou sem resultado) a busca cai no Reddit.
+      if (articles.length) {
+        this._articles.set(articles);
+        this._loading.set(false);
+        return;
+      }
+      this.buscarNoReddit(query);
+    });
+  }
+
+  private buscarNoReddit(query: string): void {
+    this.fetchFromReddit().subscribe({
+      next: articles => {
+        const alvo = query.toLowerCase();
+        this._articles.set(
+          articles.filter(a =>
+            a.title.toLowerCase().includes(alvo) ||
+            a.description.toLowerCase().includes(alvo),
+          ),
+        );
+        this._loading.set(false);
+      },
+      error: () => {
+        this._error.set('Falha na busca');
+        this._loading.set(false);
+      }
+    });
   }
 
   clearArticles(): void {

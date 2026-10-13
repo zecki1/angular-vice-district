@@ -2,9 +2,12 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map, catchError, of, tap } from 'rxjs';
 import { FreeGame } from '../models/game.models';
+import { environment } from '../../../environments/environment';
 import { CacheService } from './cache.service';
 
-const EPIC_API = 'https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions';
+// Proxy serverless: o endpoint da Epic não envia CORS, então o browser bloqueia
+// a chamada direta.
+const EPIC_API = `${environment.apiProxyUrl}/api/epic`;
 
 interface EpicElement {
   id: string;
