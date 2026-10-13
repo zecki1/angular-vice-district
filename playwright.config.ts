@@ -9,7 +9,9 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  // O `ng serve` compila chunks sob demanda; workers demais no primeiro
+  // carregamento fazem testes com timeout curto falharem. No CI roda 1.
+  workers: process.env.CI ? 1 : 2,
   reporter: process.env.CI
     ? [['html', { open: 'never', outputFolder: 'playwright-report' }], ['list']]
     : 'list',

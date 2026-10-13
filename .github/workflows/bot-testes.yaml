@@ -37,6 +37,8 @@ jobs:
           cache: npm
       - name: Instalar dependências
         run: npm ci
+      - name: Instalar browser do Playwright
+        run: npx playwright install --with-deps chromium
       - name: Lint
         run: npm run lint --if-present
       - name: Build de produção

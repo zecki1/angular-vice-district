@@ -211,6 +211,10 @@ test('responde bem em viewport de celular, sem scroll horizontal', async ({ page
 
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 
+  // Sem esperar o layout assentar, a medição acontece antes do CSS/chunks
+  // chegarem (sob carga) e acusa overflow que não existe no estado final.
+  await page.waitForLoadState('networkidle');
+
   const overflowHorizontal = await page.evaluate(
     () => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
   );

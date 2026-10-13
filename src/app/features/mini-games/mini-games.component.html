@@ -26,9 +26,9 @@
         }
       </div>
 
-      <div class="mini-games-grid grid-auto-fit" role="list">
+      <div class="mini-games-grid grid-auto-fit">
         @for (game of filteredGames(); track game.id) {
-          <article class="mini-game-card card card-glow-{{ game.color }}" role="listitem" [routerLink]="['/mini-games', game.id]">
+          <article class="mini-game-card card card-glow-{{ game.color }}" [routerLink]="['/mini-games', game.id]">
             <div class="mini-game-icon" [style.color]="'var(--color-neon-' + game.color + ')'">{{ game.icon }}</div>
             <div class="mini-game-content">
               <span class="mini-game-category badge badge-{{ game.color }}">{{ game.category }}</span>
