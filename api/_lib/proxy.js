@@ -10,33 +10,21 @@
  *
  * Convenção: o sub-caminho do recurso vem no parâmetro `path` (ex.:
  * `/api/rawg?path=games&page_size=20`). Os demais query params são repassados.
+ *
+ * CommonJS de propósito: o pacote não declara `"type": "module"`, então o
+ * runtime do Vercel carrega as funções como CJS sem reclamar.
  */
 
-export interface OpcoesProxy {
-  /** Base da API de origem, sem barra final. */
-  base: string;
-  /** Nome do parâmetro de query que carrega o sub-caminho (padrão: `path`). */
-  parametroCaminho?: string;
-  /** Query params sempre injetados (ex.: chave lida do ambiente). */
-  params?: () => Record<string, string | undefined>;
-  /** Cabeçalhos extras enviados à origem (ex.: `User-Agent`). */
-  headers?: Record<string, string>;
-  /** Tempo máximo (ms) de espera da origem (padrão: 15s). */
-  timeoutMs?: number;
-}
-
-const CABECALHOS_CORS: Record<string, string> = {
+const CABECALHOS_CORS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET,OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 };
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
-export function criarProxy(opcoes: OpcoesProxy) {
+function criarProxy(opcoes) {
   const parametro = opcoes.parametroCaminho ?? 'path';
 
-  return async function handler(req: any, res: any): Promise<void> {
+  return async function handler(req, res) {
     for (const [chave, valor] of Object.entries(CABECALHOS_CORS)) {
       res.setHeader(chave, valor);
     }
@@ -73,3 +61,5 @@ export function criarProxy(opcoes: OpcoesProxy) {
     }
   };
 }
+
+module.exports = { criarProxy };
